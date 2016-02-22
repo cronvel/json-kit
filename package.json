@@ -1,0 +1,31 @@
+{
+  "name": "json-kit",
+  "version": "0.1.0",
+  "description": "JSON stringify(), parse() and more in pure JS.",
+  "main": "lib/json.js",
+  "directories": {
+    "test": "test",
+    "bench": "bench"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "expect.js": "^0.3.1",
+    "jshint": "^2.5.6",
+    "mocha": "^2.2.5"
+  },
+  "scripts": {
+    "test": "mocha -R dot"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cronvel/json-kit.git"
+  },
+  "keywords": [
+    "json"
+  ],
+  "author": "Cédric Ronvel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cronvel/json-kit/issues"
+  }
+}
