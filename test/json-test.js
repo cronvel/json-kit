@@ -151,3 +151,21 @@ describe( "JSON" , function() {
 	} ) ;
 } ) ;
 
+
+
+describe( "JSON stream" , function() {
+	
+	it( "stringifyStream()" , function() {
+		var s = json.stringifyStream() ;
+		
+		s.on( 'data' , function( data ) {
+			console.log( 'data:' , data.toString() ) ;
+		} ) ;
+		
+		s.write( { a: 1 } ) ;
+		s.write( { toto: "titi" } ) ;
+		s.end() ;
+	} ) ;
+} ) ;
+
+
