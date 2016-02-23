@@ -370,6 +370,45 @@ describe( "parseStream()" , function() {
 		stream.end() ;
 	} ) ;
 	
+	it( "multiple objects in many write with nasty strings" , function( done ) {
+		var stream = json.parseStream() ;
+		var array = [] ;
+		
+		stream.on( 'data' , function( data ) {
+			//console( "Received " + ( typeof data ) + ':' , data ) ;
+			array.push( data ) ;
+		} ) ;
+		
+		stream.on( 'end' , function( data ) {
+			expect( array ).to.eql( [
+				{ a: '  "  }  ', b: 2, c: '  C{[' } ,
+				{ one: 1 } ,
+				[ '  tw"}"}o' , '\\"thr\\ee\n' ] ,
+				true ,
+				false ,
+				undefined
+			] ) ;
+			//console.log( '\n\n>>>>> DONE!\n\n' ) ;
+			done() ;
+		} ) ;
+		
+		stream.write( '   ' ) ;
+		stream.write( '  \n ' ) ;
+		stream.write( '  \n [{ ' ) ;
+		stream.write( '"a":"  \\"  }  "' ) ;
+		stream.write( ',"b":2,' ) ;
+		stream.write( '"c":"  C{["}' ) ;
+		stream.write( ',' ) ;
+		stream.write( '{"one":1},[ "  tw\\"}' ) ;
+		stream.write( '\\"}o" , "\\\\\\"thr\\\\' ) ;
+		stream.write( 'ee\\n" ] , tr' ) ;
+		stream.write( 'ue , false , ' ) ;
+		stream.write( 'n' ) ;
+		stream.write( 'u' ) ;
+		stream.write( 'll ]' ) ;
+		stream.write( ' \n ' ) ;
+		stream.end() ;
+	} ) ;
 } ) ;
 
 
