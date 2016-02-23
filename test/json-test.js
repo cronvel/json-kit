@@ -199,7 +199,7 @@ describe( "parseStream()" , function() {
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
-			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			//console( "Received " + ( typeof data ) + ':' , data ) ;
 			array.push( data ) ;
 		} ) ;
 		
@@ -218,7 +218,7 @@ describe( "parseStream()" , function() {
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
-			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			//console( "Received " + ( typeof data ) + ':' , data ) ;
 			array.push( data ) ;
 		} ) ;
 		
@@ -239,7 +239,7 @@ describe( "parseStream()" , function() {
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
-			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			//console( "Received " + ( typeof data ) + ':' , data ) ;
 			array.push( data ) ;
 		} ) ;
 		
@@ -258,7 +258,7 @@ describe( "parseStream()" , function() {
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
-			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			//console( "Received " + ( typeof data ) + ':' , data ) ;
 			array.push( data ) ;
 		} ) ;
 		
@@ -280,7 +280,7 @@ describe( "parseStream()" , function() {
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
-			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			//console( "Received " + ( typeof data ) + ':' , data ) ;
 			array.push( data ) ;
 		} ) ;
 		
@@ -309,7 +309,7 @@ describe( "parseStream()" , function() {
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
-			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			//console( "Received " + ( typeof data ) + ':' , data ) ;
 			array.push( data ) ;
 		} ) ;
 		
@@ -335,7 +335,7 @@ describe( "parseStream()" , function() {
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
-			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			//console( "Received " + ( typeof data ) + ':' , data ) ;
 			array.push( data ) ;
 		} ) ;
 		
