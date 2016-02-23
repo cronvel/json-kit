@@ -153,19 +153,223 @@ describe( "JSON" , function() {
 
 
 
-describe( "JSON stream" , function() {
+describe( "stringifyStream()" , function() {
 	
-	it( "stringifyStream()" , function() {
-		var s = json.stringifyStream() ;
+	it( "empty input stream should output a stream of an empty array" , function( done ) {
+		var stream = json.stringifyStream() ;
+		var str = '' ;
 		
-		s.on( 'data' , function( data ) {
-			console.log( 'data:' , data.toString() ) ;
+		stream.on( 'data' , function( data ) {
+			str += data.toString() ;
 		} ) ;
 		
-		s.write( { a: 1 } ) ;
-		s.write( { toto: "titi" } ) ;
-		s.end() ;
+		stream.on( 'end' , function( data ) {
+			expect( str ).to.be( '[]' ) ;
+			done() ;
+		} ) ;
+		
+		stream.end() ;
 	} ) ;
+	
+	it( "when the input stream push some object, the output stream should push an array of object" , function( done ) {
+		var stream = json.stringifyStream() ;
+		var str = '' ;
+		
+		stream.on( 'data' , function( data ) {
+			str += data.toString() ;
+		} ) ;
+		
+		stream.on( 'end' , function( data ) {
+			expect( str ).to.be( '[{"a":1,"b":2,"c":"C"},{"toto":"titi"}]' ) ;
+			done() ;
+		} ) ;
+		
+		stream.write( { a: 1 , b: 2 , c: 'C' } ) ;
+		stream.write( { toto: "titi" } ) ;
+		stream.end() ;
+	} ) ;
+} ) ;
+
+
+
+describe( "parseStream()" , function() {
+	
+	it( 'empty stream (i.e.: "[]")' , function( done ) {
+		var stream = json.parseStream() ;
+		var array = [] ;
+		
+		stream.on( 'data' , function( data ) {
+			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			array.push( data ) ;
+		} ) ;
+		
+		stream.on( 'end' , function( data ) {
+			expect( array ).to.eql( [] ) ;
+			//console.log( '\n\n>>>>> DONE!\n\n' ) ;
+			done() ;
+		} ) ;
+		
+		stream.write( '[]' ) ;
+		stream.end() ;
+	} ) ;
+	
+	it( "single object in one write" , function( done ) {
+		var stream = json.parseStream() ;
+		var array = [] ;
+		
+		stream.on( 'data' , function( data ) {
+			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			array.push( data ) ;
+		} ) ;
+		
+		stream.on( 'end' , function( data ) {
+			expect( array ).to.eql( [
+				{ a: 1, b: 2, c: 'C' }
+			] ) ;
+			//console.log( '\n\n>>>>> DONE!\n\n' ) ;
+			done() ;
+		} ) ;
+		
+		stream.write( '[ { "a": 1 , "b": 2 , "c": "C" } ]' ) ;
+		stream.end() ;
+	} ) ;
+	
+	it( "single string in one write" , function( done ) {
+		var stream = json.parseStream() ;
+		var array = [] ;
+		
+		stream.on( 'data' , function( data ) {
+			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			array.push( data ) ;
+		} ) ;
+		
+		stream.on( 'end' , function( data ) {
+			expect( array ).to.eql( [ "nasty string, with comma, inside" ] ) ;
+			//console.log( '\n\n>>>>> DONE!\n\n' ) ;
+			done() ;
+		} ) ;
+		
+		stream.write( '[ "nasty string, with comma, inside" ]' ) ;
+		stream.end() ;
+	} ) ;
+	
+	it( "single object in two write" , function( done ) {
+		var stream = json.parseStream() ;
+		var array = [] ;
+		
+		stream.on( 'data' , function( data ) {
+			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			array.push( data ) ;
+		} ) ;
+		
+		stream.on( 'end' , function( data ) {
+			expect( array ).to.eql( [
+				{ a: 1, b: 2, c: 'C' }
+			] ) ;
+			//console.log( '\n\n>>>>> DONE!\n\n' ) ;
+			done() ;
+		} ) ;
+		
+		stream.write( '[ { "a": 1 , "b' ) ;
+		stream.write( '": 2 , "c": "C" } ]' ) ;
+		stream.end() ;
+	} ) ;
+	
+	it( "single object in multiple write" , function( done ) {
+		var stream = json.parseStream() ;
+		var array = [] ;
+		
+		stream.on( 'data' , function( data ) {
+			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			array.push( data ) ;
+		} ) ;
+		
+		stream.on( 'end' , function( data ) {
+			expect( array ).to.eql( [
+				{ a: 1, b: 2, c: 'C' }
+			] ) ;
+			//console.log( '\n\n>>>>> DONE!\n\n' ) ;
+			done() ;
+		} ) ;
+		
+		stream.write( '   ' ) ;
+		stream.write( '  \n ' ) ;
+		stream.write( '  \n [ ' ) ;
+		stream.write( '{ "a": ' ) ;
+		stream.write( ' 1 , "b' ) ;
+		stream.write( '": 2 , "' ) ;
+		stream.write( 'c": "C" }' ) ;
+		stream.write( '  ] ' ) ;
+		stream.write( '  ' ) ;
+		stream.end() ;
+	} ) ;
+	
+	it( "multiple objects in one write" , function( done ) {
+		var stream = json.parseStream() ;
+		var array = [] ;
+		
+		stream.on( 'data' , function( data ) {
+			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			array.push( data ) ;
+		} ) ;
+		
+		stream.on( 'end' , function( data ) {
+			expect( array ).to.eql( [
+				{ a: 1, b: 2, c: 'C' } ,
+				{ one: 1 } ,
+				[ "two" , "three" ] ,
+				true ,
+				false ,
+				undefined
+			] ) ;
+			//console.log( '\n\n>>>>> DONE!\n\n' ) ;
+			done() ;
+		} ) ;
+		
+		stream.write( '[{"a":1,"b":2,"c":"C"},{"one":1},[ "two" , "three" ] , true , false , null ]' ) ;
+		stream.end() ;
+	} ) ;
+	
+	it( "multiple objects in many write" , function( done ) {
+		var stream = json.parseStream() ;
+		var array = [] ;
+		
+		stream.on( 'data' , function( data ) {
+			console.log( "Received " + ( typeof data ) + ':' , data ) ;
+			array.push( data ) ;
+		} ) ;
+		
+		stream.on( 'end' , function( data ) {
+			expect( array ).to.eql( [
+				{ a: 1, b: 2, c: 'C' } ,
+				{ one: 1 } ,
+				[ "two" , "three" ] ,
+				true ,
+				false ,
+				undefined
+			] ) ;
+			//console.log( '\n\n>>>>> DONE!\n\n' ) ;
+			done() ;
+		} ) ;
+		
+		stream.write( '   ' ) ;
+		stream.write( '  \n ' ) ;
+		stream.write( '  \n [{ ' ) ;
+		stream.write( '"a":1' ) ;
+		stream.write( ',"b":2,' ) ;
+		stream.write( '"c":"C"}' ) ;
+		stream.write( ',' ) ;
+		stream.write( '{"one":1},[ "tw' ) ;
+		stream.write( 'o" , "thr' ) ;
+		stream.write( 'ee" ] , tr' ) ;
+		stream.write( 'ue , false , ' ) ;
+		stream.write( 'n' ) ;
+		stream.write( 'u' ) ;
+		stream.write( 'll ]' ) ;
+		stream.write( ' \n ' ) ;
+		stream.end() ;
+	} ) ;
+	
 } ) ;
 
 
