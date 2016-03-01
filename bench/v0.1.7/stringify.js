@@ -28,43 +28,7 @@
 
 
 
-function stringify( v , options )
-{
-	if ( v === undefined ) { return undefined ; }
-	
-	var runtime ;
-	
-	runtime = {
-		str: '' ,
-		depth: 0 ,
-		depthLimit: Infinity ,
-		
-		stringifyAnyType: stringify.stringifyAnyType ,
-		stringifyBoolean: stringify.stringifyBoolean ,
-		stringifyNumber: stringify.stringifyNumber ,
-		stringifyString: stringify.stringifyString ,
-		stringifyAnyObject: stringify.stringifyAnyObject ,
-		stringifyArray: stringify.stringifyArray ,
-		stringifyStrictObject: stringify.stringifyStrictObject
-	} ;
-	
-	if ( options && typeof options === 'object' )
-	{
-		if ( options.depth !== undefined ) { runtime.depthLimit = options.depth ; }
-	}
-	
-	runtime.stringifyAnyType( v , runtime ) ;
-	
-	return runtime.str ;
-}
-
-
-
-module.exports = stringify ;
-
-
-
-stringify.stringifyAnyType = function stringifyAnyType( v , runtime )
+function stringifyAnyType( v , runtime )
 {
 	if ( v === undefined || v === null )
 	{
@@ -75,39 +39,39 @@ stringify.stringifyAnyType = function stringifyAnyType( v , runtime )
 	switch ( typeof v )
 	{
 		case 'boolean' :
-			return runtime.stringifyBoolean( v , runtime ) ;
+			return stringifyBoolean( v , runtime ) ;
 		case 'number' :
-			return runtime.stringifyNumber( v , runtime ) ;
+			return stringifyNumber( v , runtime ) ;
 		case 'string' :
-			return runtime.stringifyString( v , runtime ) ;
+			return stringifyString( v , runtime ) ;
 		case 'object' :
-			return runtime.stringifyAnyObject( v , runtime ) ;
+			return stringifyAnyObject( v , runtime ) ;
 	}
-} ;
+}
 
 
 
-stringify.stringifyBoolean = function stringifyBoolean( v , runtime )
+function stringifyBoolean( v , runtime )
 {
 	runtime.str += ( v ? "true" : "false" ) ;
-} ;
+}
 
 
 
-stringify.stringifyNumber = function stringifyNumber( v , runtime )
+function stringifyNumber( v , runtime )
 {
 	if ( Number.isNaN( v ) || v === Infinity || v === -Infinity ) { runtime.str += "null" ; }
 	else { runtime.str += v ; }
-} ;
+}
 
 
 
-stringify.stringifyString = function stringifyString( v , runtime )
+function stringifyString( v , runtime )
 {
 	var i = 0 , l = v.length , c ;
 	
 	// Faster on big string than stringifyStringLookup(), also big string are more likely to have at least one bad char
-	if ( l >= 200 ) { return stringify.stringifyStringRegex( v , runtime ) ; }
+	if ( l >= 200 ) { return stringifyStringRegex( v , runtime ) ; }
 	
 	// Most string are left untouched, so it's worth checking first if something must be changed.
 	// Gain 33% of perf on the whole stringify().
@@ -124,11 +88,11 @@ stringify.stringifyString = function stringifyString( v , runtime )
 		{
 			if ( l > 100 )
 			{
-				stringify.stringifyStringLookup( v , runtime ) ;
+				stringifyStringLookup( v , runtime ) ;
 			}
 			else
 			{
-				stringify.stringifyStringRegex( v , runtime ) ;
+				stringifyStringRegex( v , runtime ) ;
 			}
 			
 			return ;
@@ -137,7 +101,7 @@ stringify.stringifyString = function stringifyString( v , runtime )
 	//*/
 	
 	runtime.str += '"' + v + '"' ;
-} ;
+}
 
 
 
@@ -191,7 +155,7 @@ var stringifyStringLookup_ =
 
 
 
-stringify.stringifyStringLookup = function stringifyStringLookup( v , runtime )
+function stringifyStringLookup( v , runtime )
 //function stringifyString( v , runtime )
 {
 	var i = 0 , iMax = v.length , c ;
@@ -213,17 +177,17 @@ stringify.stringifyStringLookup = function stringifyStringLookup( v , runtime )
 	}
 	
 	runtime.str += '"' ;
-} ;
+}
 
 
 
 var stringifyStringRegex_ = /[\x00-\x1f"\\]/g ;
 
-stringify.stringifyStringRegex = function stringifyStringRegex( v , runtime )
+function stringifyStringRegex( v , runtime )
 //function stringifyString( v , runtime )
 {
 	runtime.str += '"' + v.replace( stringifyStringRegex_ , stringifyStringRegexCallback ) + '"' ;
-} ;
+}
 
 function stringifyStringRegexCallback( match )
 {
@@ -232,55 +196,48 @@ function stringifyStringRegexCallback( match )
 
 
 
-stringify.stringifyAnyObject = function stringifyAnyObject( v , runtime )
+function stringifyAnyObject( v , runtime )
 {
-	if ( runtime.depth >= runtime.depthLimit )
-	{
-		runtime.str += 'null' ;
-	}
-	else if ( typeof v.toJSON === 'function' )
+	if ( typeof v.toJSON === 'function' )
 	{
 		runtime.str += v.toJSON() ;
 	}
 	else if ( Array.isArray( v ) )
 	{
-		runtime.stringifyArray( v , runtime ) ;
+		stringifyArray( v , runtime ) ;
 	}
 	else
 	{
-		runtime.stringifyStrictObject( v , runtime ) ;
+		stringifyStrictObject( v , runtime ) ;
 	}
-} ;
+}
 
 
 
-stringify.stringifyArray = function stringifyArray( v , runtime )
+function stringifyArray( v , runtime )
 {
 	var i = 0 , iMax = v.length ;
 	
 	runtime.str += '[' ;
-	runtime.depth ++ ;
 	
 	for ( ; i < iMax ; i ++ )
 	{
 		//runtime.str += ( i ? ',' : '' ) ;
 		if ( i ) { runtime.str += ',' ; }
-		runtime.stringifyAnyType( v[ i ] , runtime ) ;
+		stringifyAnyType( v[ i ] , runtime ) ;
 	}
 	
 	runtime.str += ']' ;
-	runtime.depth -- ;
-} ;
+}
 
 
 
 // Faster than stringifyStrictObjectMemory(), but cost a bit more memory
-stringify.stringifyStrictObject = function stringifyStrictObject( v , runtime )
+function stringifyStrictObject( v , runtime )
 {
 	var i , iMax , keys ;
 	
 	runtime.str += '{' ;
-	runtime.depth ++ ;
 	
 	keys = Object.keys( v ) ;
 	
@@ -289,25 +246,23 @@ stringify.stringifyStrictObject = function stringifyStrictObject( v , runtime )
 		if ( v[ keys[ i ] ] !== undefined )
 		{
 			if ( i ) { runtime.str += ',' ; }
-			runtime.stringifyString( keys[ i ] , runtime ) ;
+			stringifyString( keys[ i ] , runtime ) ;
 			runtime.str += ':' ;
-			runtime.stringifyAnyType( v[ keys[ i ] ] , runtime ) ;
+			stringifyAnyType( v[ keys[ i ] ] , runtime ) ;
 		}
 	}
 	
 	runtime.str += '}' ;
-	runtime.depth -- ;
-} ;
+}
 
 
 
 // A bit slower than stringifyStrictObject(), but use slightly less memory
-stringify.stringifyStrictObjectMemory = function stringifyStrictObjectMemory( v , runtime )
+function stringifyStrictObjectMemory( v , runtime )
 {
 	var k , comma = false ;
 	
 	runtime.str += '{' ;
-	runtime.depth -- ;
 	
 	for ( k in v )
 	{
@@ -315,15 +270,29 @@ stringify.stringifyStrictObjectMemory = function stringifyStrictObjectMemory( v 
 		//if ( v[ k ] !== undefined )	// Faster, but include properties of the prototype
 		{
 			if ( comma ) { runtime.str += ',' ; }
-			runtime.stringifyString( k , runtime ) ;
+			stringifyString( k , runtime ) ;
 			runtime.str += ':' ;
-			runtime.stringifyAnyType( v[ k ] , runtime ) ;
+			stringifyAnyType( v[ k ] , runtime ) ;
 			comma = true ;
 		}
 	}
 	
 	runtime.str += '}' ;
-	runtime.depth -- ;
+}
+
+
+
+module.exports = function stringify( v )
+{
+	if ( v === undefined ) { return undefined ; }
+	
+	var runtime = {
+		str: ''
+	} ;
+	
+	stringifyAnyType( v , runtime ) ;
+	return runtime.str ;
 } ;
+
 
 

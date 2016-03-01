@@ -15,10 +15,37 @@ benchmark( 'JSON stringify(), real-world JSON' , function() {
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.stringify()' , function() {
+	competitor( 'json.stringify()' , function() {
 		json.stringify( sample ) ;
 	} ) ;
+	
+	var alt = require( './v0.1.7/json.js' ) ;
+	competitor( 'json.stringify() v0.1.7' , function() {
+		alt.stringify( sample ) ;
+	} ) ;
 } ) ;
+
+
+
+benchmark( 'JSON parse(), real-world JSON' , function() {
+	
+	var sample = fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ;
+	
+	competitor( 'Native JSON.parse()' , function() {
+		JSON.parse( sample ) ;
+	} ) ;
+	
+	competitor( 'json.parse()' , function() {
+		json.parse( sample ) ;
+	} ) ;
+	
+	var alt = require( './v0.1.7/json.js' ) ;
+	competitor( 'json.parse() v0.1.7' , function() {
+		alt.parse( sample ) ;
+	} ) ;
+} ) ;
+
+
 
 
 
@@ -30,7 +57,7 @@ benchmark( 'JSON stringify(), flat object with big strings' , function() {
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.stringify()' , function() {
+	competitor( 'json.stringify()' , function() {
 		json.stringify( sample ) ;
 	} ) ;
 } ) ;
@@ -45,7 +72,7 @@ benchmark( 'JSON stringify(), flat object with big strings and full of bad chars
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.stringify()' , function() {
+	competitor( 'json.stringify()' , function() {
 		json.stringify( sample ) ;
 	} ) ;
 } ) ;
@@ -60,7 +87,7 @@ benchmark( 'JSON stringify(), big flat object' , function() {
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.stringify()' , function() {
+	competitor( 'json.stringify()' , function() {
 		json.stringify( sample ) ;
 	} ) ;
 } ) ;
@@ -75,27 +102,12 @@ benchmark( 'JSON stringify(), big deep object' , function() {
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.stringify()' , function() {
+	competitor( 'json.stringify()' , function() {
 		json.stringify( sample ) ;
 	} ) ;
 } ) ;
 
 
-
-
-
-benchmark( 'JSON parse(), real-world JSON' , function() {
-	
-	var sample = fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ;
-	
-	competitor( 'Native JSON.parse()' , function() {
-		JSON.parse( sample ) ;
-	} ) ;
-	
-	competitor( 'tree.json.parse()' , function() {
-		json.parse( sample ) ;
-	} ) ;
-} ) ;
 
 
 
@@ -107,7 +119,7 @@ benchmark( 'JSON parse(), dummy false' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -122,7 +134,7 @@ benchmark( 'JSON parse(), dummy number' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -137,7 +149,7 @@ benchmark( 'JSON parse(), dummy string' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -152,7 +164,7 @@ benchmark( 'JSON parse(), dummy string one backslash' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -167,7 +179,7 @@ benchmark( 'JSON parse(), dummy string many backslashes' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -182,7 +194,7 @@ benchmark( 'JSON parse(), flat object with big strings' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -197,7 +209,7 @@ benchmark( 'JSON parse(), flat object with big strings and full of bad chars' , 
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -212,7 +224,7 @@ benchmark( 'JSON parse(), big flat object' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -227,7 +239,7 @@ benchmark( 'JSON parse(), big flat object, prettyfied' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -242,7 +254,7 @@ benchmark( 'JSON parse(), big deep object' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;
@@ -257,7 +269,7 @@ benchmark( 'JSON parse(), big deep object, prettyfied' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'tree.json.parse()' , function() {
+	competitor( 'json.parse()' , function() {
 		json.parse( sample ) ;
 	} ) ;
 } ) ;

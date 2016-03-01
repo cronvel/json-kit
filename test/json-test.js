@@ -66,9 +66,9 @@ function testParseEq( s )
 
 
 
-describe( "JSON" , function() {
+describe( "JSON stringify" , function() {
 	
-	it( "stringify()" , function() {
+	it( "basic test" , function() {
 		
 		testStringifyEq( undefined ) ;
 		testStringifyEq( null ) ;
@@ -109,7 +109,29 @@ describe( "JSON" , function() {
 		//testStringifyEq( require( '../sample/garbageStringObject.js' ) ) ;
 	} ) ;
 	
-	it( "parse()" , function() {
+	it( "depth limit" , function() {
+		
+		var o = {
+			a: 1,
+			b: 2,
+			c: {
+				d: 4,
+				e: 5
+			}
+		} ;
+		
+		expect( json.stringify( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( json.stringify( o , { depth: 0 } ) ).to.be( 'null' ) ;
+		expect( json.stringify( o , { depth: 1 } ) ).to.be( '{"a":1,"b":2,"c":null}' ) ;
+		expect( json.stringify( o , { depth: 2 } ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+	} ) ;
+} ) ;
+
+
+	
+describe( "JSON parse" , function() {
+	
+	it( "basic test" , function() {
 		
 		testParseEq( 'null' ) ;
 		testParseEq( 'true' ) ;
