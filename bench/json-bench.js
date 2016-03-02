@@ -7,7 +7,7 @@ var fs = require( 'fs' ) ;
 
 
 
-benchmark( 'JSON stringify(), real-world JSON' , function() {
+benchmark( 'JSON stringify(), real-world normal JSON' , function() {
 	
 	var sample = require( '../sample/sample1.json' ) ;
 	
@@ -23,11 +23,15 @@ benchmark( 'JSON stringify(), real-world JSON' , function() {
 	competitor( 'json.stringify() v0.1.7' , function() {
 		alt.stringify( sample ) ;
 	} ) ;
+	
+	competitor( 'json.stringify() circularRefNotation mode' , function() {
+		json.stringify( sample , { mode: 'circularRefNotation' } ) ;
+	} ) ;
 } ) ;
 
 
 
-benchmark( 'JSON parse(), real-world JSON' , function() {
+benchmark( 'JSON parse(), real-world normal JSON' , function() {
 	
 	var sample = fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ;
 	
@@ -42,6 +46,10 @@ benchmark( 'JSON parse(), real-world JSON' , function() {
 	var alt = require( './v0.1.7/json.js' ) ;
 	competitor( 'json.parse() v0.1.7' , function() {
 		alt.parse( sample ) ;
+	} ) ;
+	
+	competitor( 'json.parse() circularRefNotation mode' , function() {
+		json.parse( sample , { mode: 'circularRefNotation' } ) ;
 	} ) ;
 } ) ;
 
@@ -103,7 +111,31 @@ benchmark( 'JSON stringify(), big deep object' , function() {
 	} ) ;
 	
 	competitor( 'json.stringify()' , function() {
-		json.stringify( sample ) ;
+		json.stringify( sample , { depth: Infinity } ) ;
+	} ) ;
+} ) ;
+
+
+
+benchmark( 'JSON stringify(), big deep object (1000) with depth limit' , function() {
+	
+	var sample = require( '../sample/bigDeepObject.js' ) ;
+	
+	competitor( 'Native JSON.stringify() (dont feature depth limit)' , function() {
+		JSON.stringify( sample ) ;
+	} ) ;
+	
+	competitor( 'json.stringify() without depth limit' , function() {
+		json.stringify( sample , { depth: Infinity } ) ;
+	} ) ;
+	
+	var alt = require( './v0.1.7/json.js' ) ;
+	competitor( 'json.parse() v0.1.7 (dont feature depth limit)' , function() {
+		alt.stringify( sample ) ;
+	} ) ;
+	
+	competitor( 'json.parse() with depth limited to 10' , function() {
+		json.stringify( sample , { depth: 10 } ) ;
 	} ) ;
 } ) ;
 
@@ -255,7 +287,31 @@ benchmark( 'JSON parse(), big deep object' , function() {
 	} ) ;
 	
 	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+		json.parse( sample , { depth: Infinity } ) ;
+	} ) ;
+} ) ;
+
+
+
+benchmark( 'JSON parse(), big deep object (1000) with depth limit' , function() {
+	
+	var sample = JSON.stringify( require( '../sample/bigDeepObject.js' ) ) ;
+	
+	competitor( 'Native JSON.parse() (dont feature depth limit)' , function() {
+		JSON.parse( sample ) ;
+	} ) ;
+	
+	competitor( 'json.parse() without depth limit' , function() {
+		json.parse( sample , { depth: Infinity } ) ;
+	} ) ;
+	
+	var alt = require( './v0.1.7/json.js' ) ;
+	competitor( 'json.parse() v0.1.7 (dont feature depth limit)' , function() {
+		alt.parse( sample ) ;
+	} ) ;
+	
+	competitor( 'json.parse() with depth limited to 10' , function() {
+		json.parse( sample , { depth: 10 } ) ;
 	} ) ;
 } ) ;
 
@@ -270,7 +326,7 @@ benchmark( 'JSON parse(), big deep object, prettyfied' , function() {
 	} ) ;
 	
 	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+		json.parse( sample , { depth: Infinity } ) ;
 	} ) ;
 } ) ;
 
