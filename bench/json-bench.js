@@ -15,13 +15,13 @@ benchmark( 'JSON stringify(), real-world normal JSON' , function() {
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify()' , function() {
-		json.stringify( sample ) ;
-	} ) ;
-	
 	var alt = require( './v0.1.7/json.js' ) ;
 	competitor( 'json.stringify() v0.1.7' , function() {
 		alt.stringify( sample ) ;
+	} ) ;
+	
+	competitor( 'json.stringify()' , function() {
+		json.stringify( sample ) ;
 	} ) ;
 	
 	competitor( 'json.stringify() circularRefNotation mode' , function() {
@@ -39,13 +39,13 @@ benchmark( 'JSON parse(), real-world normal JSON' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
-	} ) ;
-	
 	var alt = require( './v0.1.7/json.js' ) ;
 	competitor( 'json.parse() v0.1.7' , function() {
 		alt.parse( sample ) ;
+	} ) ;
+	
+	competitor( 'json.parse()' , function() {
+		json.parse( sample ) ;
 	} ) ;
 	
 	competitor( 'json.parse() circularRefNotation mode' , function() {
@@ -125,13 +125,13 @@ benchmark( 'JSON stringify(), big deep object (1000) with depth limit' , functio
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify() without depth limit' , function() {
-		json.stringify( sample , { depth: Infinity } ) ;
-	} ) ;
-	
 	var alt = require( './v0.1.7/json.js' ) ;
 	competitor( 'json.parse() v0.1.7 (dont feature depth limit)' , function() {
 		alt.stringify( sample ) ;
+	} ) ;
+	
+	competitor( 'json.stringify() without depth limit' , function() {
+		json.stringify( sample , { depth: Infinity } ) ;
 	} ) ;
 	
 	competitor( 'json.parse() with depth limited to 10' , function() {
@@ -301,13 +301,13 @@ benchmark( 'JSON parse(), big deep object (1000) with depth limit' , function() 
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse() without depth limit' , function() {
-		json.parse( sample , { depth: Infinity } ) ;
-	} ) ;
-	
 	var alt = require( './v0.1.7/json.js' ) ;
 	competitor( 'json.parse() v0.1.7 (dont feature depth limit)' , function() {
 		alt.parse( sample ) ;
+	} ) ;
+	
+	competitor( 'json.parse() without depth limit' , function() {
+		json.parse( sample , { depth: Infinity } ) ;
 	} ) ;
 	
 	competitor( 'json.parse() with depth limited to 10' , function() {
