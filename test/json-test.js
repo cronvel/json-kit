@@ -96,7 +96,6 @@ describe( "JSON stringify" , function() {
 		testStringifyEq( {} ) ;
 		testStringifyEq( {a:1,b:'2'} ) ;
 		testStringifyEq( {a:1,b:'2',c:true,d:null,e:undefined} ) ;
-		//console.log( json.stringify( {a:1,b:'2',c:true,d:null,e:undefined} ) ) ;
 		testStringifyEq( {a:1,b:'2',sub:{c:true,d:null,e:undefined,sub:{f:''}}} ) ;
 		
 		testStringifyEq( [] ) ;
@@ -178,7 +177,6 @@ describe( "JSON stringify" , function() {
 	} ) ;
 	
 	it( "unique ref notation" , function() {
-		
 		var a = {
 			k1: 1,
 			k2: 2
@@ -198,7 +196,7 @@ describe( "JSON stringify" , function() {
 		} ;
 		
 		expect( json.stringify( a , { mode: "uniqueRefNotation" } ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":[]}}}' ) ;
-		//expect( json.stringify( o , { mode: "uniqueRefNotation" } ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"@@ref@@":-2}}}}' ) ;
+		expect( json.stringify( o , { mode: "uniqueRefNotation" } ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ) ;
 	} ) ;
 } ) ;
 
@@ -247,6 +245,19 @@ describe( "JSON parse" , function() {
 		testParseEq( fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ) ;
 	} ) ;
 	
+	it( "depth limit" , function() {
+		
+		var oJson ;
+		
+		oJson = '{"a":1,"b":2,"c":{"d":4,"e":5},"f":6}' ;
+		expect( json.parse( oJson , { depth: 0 } ) ).to.be( undefined ) ;
+		expect( json.parse( oJson , { depth: 1 } ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
+		expect( json.parse( oJson , { depth: 2 } ) ).to.eql( {a:1,b:2,c:{d:4,e:5},f:6} ) ;
+		
+		oJson = '{"a":1,"b":2,"c":{"nasty\\n\\"key}}]][{":"nasty[value{}}}]]"},"f":6}' ;
+		expect( json.parse( oJson , { depth: 1 } ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
+	} ) ;
+	
 	it( "circular ref notation" , function() {
 		
 		var aJson = '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}}' ;
@@ -270,16 +281,21 @@ describe( "JSON parse" , function() {
 			b: b
 		} ;
 		
-		var aParsed = json.parse( aJson , { mode: "circularRefNotation" } ) ;
+		var aParsed = json.parse( aJson , { mode: "refNotation" } ) ;
+		expect( aParsed ).to.only.have.keys( [ 'k1' , 'k2' , 'k3' ] ) ;
 		expect( aParsed.k1 ).to.be( 1 ) ;
 		expect( aParsed.k2 ).to.be( 2 ) ;
+		expect( aParsed.k3 ).to.only.have.keys( [ 'k4' , 'k5' , 'k6' ] ) ;
 		expect( aParsed.k3.k4 ).to.be( 1 ) ;
 		expect( aParsed.k3.k5 ).to.be( 2 ) ;
 		expect( aParsed.k3.k6 ).to.be( aParsed ) ;
 		
-		var oParsed = json.parse( oJson , { mode: "circularRefNotation" } ) ;
+		var oParsed = json.parse( oJson , { mode: "refNotation" } ) ;
+		expect( oParsed ).to.only.have.keys( [ 'a' , 'b' ] ) ;
+		expect( oParsed.a ).to.only.have.keys( [ 'k1' , 'k2' , 'k3' ] ) ;
 		expect( oParsed.a.k1 ).to.be( 1 ) ;
 		expect( oParsed.a.k2 ).to.be( 2 ) ;
+		expect( oParsed.b ).to.only.have.keys( [ 'k4' , 'k5' , 'k6' ] ) ;
 		expect( oParsed.b.k4 ).to.be( 1 ) ;
 		expect( oParsed.b.k5 ).to.be( 2 ) ;
 		expect( oParsed.a.k3.k6 ).to.be( oParsed.a ) ;
@@ -289,17 +305,55 @@ describe( "JSON parse" , function() {
 		//expect( oParsed.b.k6 ).to.be( oParsed.a ) ;	// not true in this mode
 	} ) ;
 	
-	it( "depth limit" , function() {
+	it( "unique ref notation" , function() {
 		
-		var oJson ;
+		var aJson = '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":[]}}}' ;
+		var oJson = '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ;
 		
-		oJson = '{"a":1,"b":2,"c":{"d":4,"e":5},"f":6}' ;
-		expect( json.parse( oJson , { depth: 0 } ) ).to.be( undefined ) ;
-		expect( json.parse( oJson , { depth: 1 } ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
-		expect( json.parse( oJson , { depth: 2 } ) ).to.eql( {a:1,b:2,c:{d:4,e:5},f:6} ) ;
+		var a = {
+			k1: 1,
+			k2: 2
+		} ;
 		
-		oJson = '{"a":1,"b":2,"c":{"nasty\\n\\"key}}]][{":"nasty[value{}}}]]"},"f":6}' ;
-		expect( json.parse( oJson , { depth: 1 } ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
+		var b = {
+			k4: 1,
+			k5: 2
+		} ;
+		
+		a.k3 = b ;
+		b.k6 = a ;
+		
+		var o = {
+			a: a,
+			b: b
+		} ;
+		
+		var aParsed = json.parse( aJson , { mode: "refNotation" } ) ;
+		//console.log( '\n\naParsed:' , aParsed ) ;
+		expect( aParsed ).to.only.have.keys( [ 'k1' , 'k2' , 'k3' ] ) ;
+		expect( aParsed.k1 ).to.be( 1 ) ;
+		expect( aParsed.k2 ).to.be( 2 ) ;
+		expect( aParsed.k3 ).to.only.have.keys( [ 'k4' , 'k5' , 'k6' ] ) ;
+		expect( aParsed.k3.k4 ).to.be( 1 ) ;
+		expect( aParsed.k3.k5 ).to.be( 2 ) ;
+		expect( aParsed.k3.k6 ).to.be( aParsed ) ;
+		
+		//console.log( "\n\n" ) ;
+		
+		var oParsed = json.parse( oJson , { mode: "refNotation" } ) ;
+		//console.log( '\n\noParsed:' , oParsed ) ;
+		expect( oParsed ).to.only.have.keys( [ 'a' , 'b' ] ) ;
+		expect( oParsed.a ).to.only.have.keys( [ 'k1' , 'k2' , 'k3' ] ) ;
+		expect( oParsed.a.k1 ).to.be( 1 ) ;
+		expect( oParsed.a.k2 ).to.be( 2 ) ;
+		expect( oParsed.b ).to.only.have.keys( [ 'k4' , 'k5' , 'k6' ] ) ;
+		expect( oParsed.b.k4 ).to.be( 1 ) ;
+		expect( oParsed.b.k5 ).to.be( 2 ) ;
+		expect( oParsed.a.k3.k6 ).to.be( oParsed.a ) ;
+		expect( oParsed.b.k6.k3 ).to.be( oParsed.b ) ;
+		
+		expect( oParsed.a.k3 ).to.be( oParsed.b ) ;
+		expect( oParsed.b.k6 ).to.be( oParsed.a ) ;
 	} ) ;
 } ) ;
 

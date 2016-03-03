@@ -48,8 +48,8 @@ benchmark( 'JSON parse(), real-world normal JSON' , function() {
 		json.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse() circularRefNotation mode' , function() {
-		json.parse( sample , { mode: 'circularRefNotation' } ) ;
+	competitor( 'json.parse() refNotation mode' , function() {
+		json.parse( sample , { mode: 'refNotation' } ) ;
 	} ) ;
 } ) ;
 
