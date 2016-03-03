@@ -27,6 +27,10 @@ benchmark( 'JSON stringify(), real-world normal JSON' , function() {
 	competitor( 'json.stringify() circularRefNotation mode' , function() {
 		json.stringify( sample , { mode: 'circularRefNotation' } ) ;
 	} ) ;
+	
+	competitor( 'json.stringify() uniqueRefNotation mode' , function() {
+		json.stringify( sample , { mode: 'uniqueRefNotation' } ) ;
+	} ) ;
 } ) ;
 
 
@@ -136,6 +140,42 @@ benchmark( 'JSON stringify(), big deep object (1000) with depth limit' , functio
 	
 	competitor( 'json.parse() with depth limited to 10' , function() {
 		json.stringify( sample , { depth: 10 } ) ;
+	} ) ;
+} ) ;
+
+
+
+benchmark( 'JSON stringify(), redundancy (objects that are in multiple places in a tree)' , function() {
+	
+	var s = require( '../sample/sample1.json' ) ;
+	
+	var sample = {
+		a: s ,
+		b: {
+			c: "some data",
+			d: s
+		} ,
+		e: "some data",
+		f: {
+			g: [ "some data" , s , "some data" , s ]
+		}
+	} ;
+	
+	competitor( 'Native JSON.stringify()' , function() {
+		JSON.stringify( sample ) ;
+	} ) ;
+	
+	var alt = require( './v0.1.7/json.js' ) ;
+	competitor( 'json.stringify() v0.1.7' , function() {
+		alt.stringify( sample ) ;
+	} ) ;
+	
+	competitor( 'json.stringify()' , function() {
+		json.stringify( sample ) ;
+	} ) ;
+	
+	competitor( 'json.stringify() uniqueRefNotation mode' , function() {
+		json.stringify( sample , { mode: 'uniqueRefNotation' } ) ;
 	} ) ;
 } ) ;
 
@@ -327,6 +367,44 @@ benchmark( 'JSON parse(), big deep object, prettyfied' , function() {
 	
 	competitor( 'json.parse()' , function() {
 		json.parse( sample , { depth: Infinity } ) ;
+	} ) ;
+} ) ;
+
+
+
+
+
+benchmark( 'JSON stringify() then parse(), redundancy (objects that are in multiple places in a tree)' , function() {
+	
+	var s = require( '../sample/sample1.json' ) ;
+	
+	var sample = {
+		a: s ,
+		b: {
+			c: "some data",
+			d: s
+		} ,
+		e: "some data",
+		f: {
+			g: [ "some data" , s , "some data" , s ]
+		}
+	} ;
+	
+	competitor( 'Native JSON.stringify()' , function() {
+		JSON.parse( JSON.stringify( sample ) ) ;
+	} ) ;
+	
+	var alt = require( './v0.1.7/json.js' ) ;
+	competitor( 'json.stringify() v0.1.7' , function() {
+		alt.parse( alt.stringify( sample ) ) ;
+	} ) ;
+	
+	competitor( 'json.stringify()' , function() {
+		json.parse( json.stringify( sample ) ) ;
+	} ) ;
+	
+	competitor( 'json.stringify() uniqueRefNotation mode' , function() {
+		json.parse( json.stringify( sample , { mode: 'uniqueRefNotation' } ) , { mode: 'refNotation' } ) ;
 	} ) ;
 } ) ;
 

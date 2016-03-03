@@ -45,14 +45,14 @@ var expect = require( 'expect.js' ) ;
 
 function testStringifyEq( v )
 {
-	expect( json.stringify( v ) )
+	expect( json.stringify( v , { depth: Infinity } ) )
 		.to.be( JSON.stringify( v ) ) ;
 }
 
 function testParseEq( s )
 {
 	expect( JSON.stringify(
-			json.parse( s )
+			json.parse( s , { depth: Infinity } )
 		) )
 		.to.be( JSON.stringify(
 			JSON.parse( s )
@@ -197,6 +197,8 @@ describe( "JSON stringify" , function() {
 		
 		expect( json.stringify( a , { mode: "uniqueRefNotation" } ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":[]}}}' ) ;
 		expect( json.stringify( o , { mode: "uniqueRefNotation" } ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ) ;
+		
+		
 	} ) ;
 } ) ;
 
@@ -354,6 +356,68 @@ describe( "JSON parse" , function() {
 		
 		expect( oParsed.a.k3 ).to.be( oParsed.b ) ;
 		expect( oParsed.b.k6 ).to.be( oParsed.a ) ;
+	} ) ;
+} ) ;
+
+
+
+describe( "JSON stringify + parse with the ref notation" , function() {
+	
+	it( "big test" , function() {
+		// Big test
+		var sample = require( '../sample/sample1.json' ) ;
+		var sampleJson = JSON.stringify( sample ) ;
+		
+		var o = {
+			a: sample ,
+			b: {
+				c: "some data",
+				d: sample
+			} ,
+			e: "some data",
+			f: {
+				g: [ "some data" , sample , "some data" , sample ]
+			}
+		} ;
+		
+		var json1 = json.stringify( o , { mode: "uniqueRefNotation" } ) ;
+		
+		expect( json1 ).to.be(
+			'{"a":' + sampleJson + ',"b":{"c":"some data","d":{"@@ref@@":["a"]}},"e":"some data","f":{"g":["some data",{"@@ref@@":["a"]},"some data",{"@@ref@@":["a"]}]}}'
+		) ;
+		
+		var r = json.parse( json1 , { mode: "refNotation" } ) ;
+		expect( r ).to.eql( o ) ;
+		expect( r.b.d ).to.be( r.a ) ;
+		expect( r.f.g[ 1 ] ).to.be( r.a ) ;
+		expect( r.f.g[ 3 ] ).to.be( r.a ) ;
+		
+		
+		// Test ref to an array
+		o = {
+			a: [ "one" , 2 , sample , 4 , sample ] ,
+			b: {
+				c: "some data",
+				d: sample
+			} ,
+			e: "some data",
+			f: {
+				g: [ "some data" , sample , "some data" , sample ]
+			}
+		} ;
+		
+		var json2 = json.stringify( o , { mode: "uniqueRefNotation" } ) ;
+		
+		expect( json2 ).to.be(
+			'{"a":["one",2,' + sampleJson + ',4,{"@@ref@@":["a",2]}],"b":{"c":"some data","d":{"@@ref@@":["a",2]}},"e":"some data","f":{"g":["some data",{"@@ref@@":["a",2]},"some data",{"@@ref@@":["a",2]}]}}'
+		) ;
+		
+		r = json.parse( json2 , { mode: "refNotation" } ) ;
+		expect( r ).to.eql( o ) ;
+		expect( r.a[ 2 ] ).to.be( r.b.d ) ;
+		expect( r.a[ 4 ] ).to.be( r.b.d ) ;
+		expect( r.f.g[ 1 ] ).to.be( r.b.d ) ;
+		expect( r.f.g[ 3 ] ).to.be( r.b.d ) ;
 	} ) ;
 } ) ;
 
