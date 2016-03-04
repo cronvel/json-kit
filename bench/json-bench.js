@@ -5,7 +5,7 @@ var fs = require( 'fs' ) ;
 
 
 
-var stringifyRaw = json.stringifier() ;
+var stringifyRaw = json.stringifier( { useToJSON: false } ) ;
 var stringifyDepthLimit = json.stringifier( { depthLimit: 20 } ) ;
 var stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
 var stringifyUniqueRefNotation = json.stringifier( { uniqueRefNotation: true } ) ;
