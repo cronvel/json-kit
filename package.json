@@ -7,11 +7,13 @@
     "test": "test",
     "bench": "bench"
   },
-  "dependencies": {},
+  "dependencies": {
+    "smart-preprocessor": "^0.2.0"
+  },
   "devDependencies": {
     "expect.js": "^0.3.1",
-    "jshint": "^2.5.6",
-    "mocha": "^2.2.5"
+    "jshint": "^2.9.1",
+    "mocha": "^2.4.5"
   },
   "scripts": {
     "test": "mocha -R dot"

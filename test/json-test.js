@@ -43,16 +43,16 @@ var expect = require( 'expect.js' ) ;
 
 
 
-function testStringifyEq( v )
+function testStringifyEq( stringify , v )
 {
-	expect( json.stringify( v , { depth: Infinity } ) )
+	expect( stringify( v ) )
 		.to.be( JSON.stringify( v ) ) ;
 }
 
-function testParseEq( s )
+function testParseEq( parse , s )
 {
 	expect( JSON.stringify(
-			json.parse( s , { depth: Infinity } )
+			parse( s )
 		) )
 		.to.be( JSON.stringify(
 			JSON.parse( s )
@@ -70,43 +70,45 @@ describe( "JSON stringify" , function() {
 	
 	it( "basic test" , function() {
 		
-		testStringifyEq( undefined ) ;
-		testStringifyEq( null ) ;
-		testStringifyEq( true ) ;
-		testStringifyEq( false ) ;
+		var stringify = json.stringifier( {} ) ;
 		
-		testStringifyEq( 0 ) ;
-		testStringifyEq( 0.0000000123 ) ;
-		testStringifyEq( -0.0000000123 ) ;
-		testStringifyEq( 1234 ) ;
-		testStringifyEq( -1234 ) ;
-		testStringifyEq( NaN ) ;
-		testStringifyEq( Infinity ) ;
-		testStringifyEq( - Infinity ) ;
+		testStringifyEq( stringify , undefined ) ;
+		testStringifyEq( stringify , null ) ;
+		testStringifyEq( stringify , true ) ;
+		testStringifyEq( stringify , false ) ;
 		
-		testStringifyEq( '' ) ;
-		testStringifyEq( '0' ) ;
-		testStringifyEq( '1' ) ;
-		testStringifyEq( '123' ) ;
-		testStringifyEq( 'A' ) ;
-		testStringifyEq( 'ABC' ) ;
-		testStringifyEq( '\ta"b"c\n\rAB\tC\né~\'#&|_\\-ł"»¢/æ//nĸ^' ) ;
-		testStringifyEq( '\t\v\x00\x01\x7f\x1fa\x7fa' ) ;
+		testStringifyEq( stringify , 0 ) ;
+		testStringifyEq( stringify , 0.0000000123 ) ;
+		testStringifyEq( stringify , -0.0000000123 ) ;
+		testStringifyEq( stringify , 1234 ) ;
+		testStringifyEq( stringify , -1234 ) ;
+		testStringifyEq( stringify , NaN ) ;
+		testStringifyEq( stringify , Infinity ) ;
+		testStringifyEq( stringify , - Infinity ) ;
 		
-		testStringifyEq( {} ) ;
-		testStringifyEq( {a:1,b:'2'} ) ;
-		testStringifyEq( {a:1,b:'2',c:true,d:null,e:undefined} ) ;
-		testStringifyEq( {a:1,b:'2',sub:{c:true,d:null,e:undefined,sub:{f:''}}} ) ;
+		testStringifyEq( stringify , '' ) ;
+		testStringifyEq( stringify , '0' ) ;
+		testStringifyEq( stringify , '1' ) ;
+		testStringifyEq( stringify , '123' ) ;
+		testStringifyEq( stringify , 'A' ) ;
+		testStringifyEq( stringify , 'ABC' ) ;
+		testStringifyEq( stringify , '\ta"b"c\n\rAB\tC\né~\'#&|_\\-ł"»¢/æ//nĸ^' ) ;
+		testStringifyEq( stringify , '\t\v\x00\x01\x7f\x1fa\x7fa' ) ;
 		
-		testStringifyEq( [] ) ;
-		testStringifyEq( [1,'2'] ) ;
-		testStringifyEq( [1,'2',[null,undefined,true]] ) ;
+		testStringifyEq( stringify , {} ) ;
+		testStringifyEq( stringify , {a:1,b:'2'} ) ;
+		testStringifyEq( stringify , {a:1,b:'2',c:true,d:null,e:undefined} ) ;
+		testStringifyEq( stringify , {a:1,b:'2',sub:{c:true,d:null,e:undefined,sub:{f:''}}} ) ;
 		
-		testStringifyEq( require( '../sample/sample1.json' ) ) ;
-		testStringifyEq( require( '../sample/stringFlatObject.js' ) ) ;
+		testStringifyEq( stringify , [] ) ;
+		testStringifyEq( stringify , [1,'2'] ) ;
+		testStringifyEq( stringify , [1,'2',[null,undefined,true]] ) ;
+		
+		testStringifyEq( stringify , require( '../sample/sample1.json' ) ) ;
+		testStringifyEq( stringify , require( '../sample/stringFlatObject.js' ) ) ;
 		
 		// Investigate why it does not work
-		//testStringifyEq( require( '../sample/garbageStringObject.js' ) ) ;
+		//testStringifyEq( stringify , require( '../sample/garbageStringObject.js' ) ) ;
 	} ) ;
 	
 	it( "depth limit" , function() {
@@ -120,10 +122,8 @@ describe( "JSON stringify" , function() {
 			}
 		} ;
 		
-		expect( json.stringify( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
-		expect( json.stringify( o , { depth: 0 } ) ).to.be( 'null' ) ;
-		expect( json.stringify( o , { depth: 1 } ) ).to.be( '{"a":1,"b":2,"c":null}' ) ;
-		expect( json.stringify( o , { depth: 2 } ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( json.stringifier( { depth: 1 } )( o ) ).to.be( '{"a":1,"b":2,"c":null}' ) ;
+		expect( json.stringifier( { depth: 2 } )( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
 		
 		var a = {
 			k1: 1,
@@ -143,13 +143,13 @@ describe( "JSON stringify" , function() {
 			b: b
 		} ;
 		
-		expect( json.stringify( a , { depth: 2 } ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}' ) ;
-		expect( json.stringify( a , { depth: 3 } ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
-		expect( json.stringify( a , { depth: 4 } ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
+		expect( json.stringifier( { depth: 2 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( json.stringifier( { depth: 3 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
+		expect( json.stringifier( { depth: 4 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
 		
-		expect( json.stringify( o , { depth: 2 } ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":null},"b":{"k4":1,"k5":2,"k6":null}}' ) ;
-		expect( json.stringify( o , { depth: 3 } ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
-		expect( json.stringify( o , { depth: 4 } ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
+		expect( json.stringifier( { depth: 2 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":null},"b":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( json.stringifier( { depth: 3 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
+		expect( json.stringifier( { depth: 4 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
 	} ) ;
 	
 	it( "circular ref notation" , function() {
@@ -172,8 +172,8 @@ describe( "JSON stringify" , function() {
 			b: b
 		} ;
 		
-		expect( json.stringify( a , { mode: "circularRefNotation" } ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}}' ) ;
-		expect( json.stringify( o , { mode: "circularRefNotation" } ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"@@ref@@":-2}}}}' ) ;
+		expect( json.stringifier( { circularRefNotation: true } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}}' ) ;
+		expect( json.stringifier( { circularRefNotation: true } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"@@ref@@":-2}}}}' ) ;
 	} ) ;
 	
 	it( "unique ref notation" , function() {
@@ -195,10 +195,8 @@ describe( "JSON stringify" , function() {
 			b: b
 		} ;
 		
-		expect( json.stringify( a , { mode: "uniqueRefNotation" } ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":[]}}}' ) ;
-		expect( json.stringify( o , { mode: "uniqueRefNotation" } ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ) ;
-		
-		
+		expect( json.stringifier( { uniqueRefNotation: true } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":[]}}}' ) ;
+		expect( json.stringifier( { uniqueRefNotation: true } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ) ;
 	} ) ;
 } ) ;
 
