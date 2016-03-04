@@ -154,6 +154,8 @@ describe( "JSON stringify" , function() {
 	
 	it( "circular ref notation" , function() {
 		
+		var stringify = json.stringifier( { circularRefNotation: true } ) ;
+		
 		var a = {
 			k1: 1,
 			k2: 2
@@ -172,11 +174,14 @@ describe( "JSON stringify" , function() {
 			b: b
 		} ;
 		
-		expect( json.stringifier( { circularRefNotation: true } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}}' ) ;
-		expect( json.stringifier( { circularRefNotation: true } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"@@ref@@":-2}}}}' ) ;
+		expect( stringify( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}}' ) ;
+		expect( stringify( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"@@ref@@":-2}}}}' ) ;
 	} ) ;
 	
 	it( "unique ref notation" , function() {
+		
+		var stringify = json.stringifier( { uniqueRefNotation: true } ) ;
+		
 		var a = {
 			k1: 1,
 			k2: 2
@@ -195,8 +200,8 @@ describe( "JSON stringify" , function() {
 			b: b
 		} ;
 		
-		expect( json.stringifier( { uniqueRefNotation: true } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":[]}}}' ) ;
-		expect( json.stringifier( { uniqueRefNotation: true } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ) ;
+		expect( stringify( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":[]}}}' ) ;
+		expect( stringify( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ) ;
 	} ) ;
 } ) ;
 

@@ -5,9 +5,14 @@ var fs = require( 'fs' ) ;
 
 
 
+var stringifyRaw = json.stringifier() ;
+var stringifyDepthLimit = json.stringifier( { depthLimit: 20 } ) ;
+var stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
+var stringifyUniqueRefNotation = json.stringifier( { uniqueRefNotation: true } ) ;
 
 
-benchmark( 'JSON stringify(), real-world normal JSON' , function() {
+
+benchmark( 'JSON stringify(), real-world normal object' , function() {
 	
 	var sample = require( '../sample/sample1.json' ) ;
 	
@@ -16,20 +21,24 @@ benchmark( 'JSON stringify(), real-world normal JSON' , function() {
 	} ) ;
 	
 	var alt = require( './v0.1.7/json.js' ) ;
-	competitor( 'json.stringify() v0.1.7' , function() {
+	competitor( 'v0.1.7' , function() {
 		alt.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify()' , function() {
-		json.stringify( sample ) ;
+	competitor( 'raw' , function() {
+		stringifyRaw( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify() circularRefNotation mode' , function() {
-		json.stringify( sample , { mode: 'circularRefNotation' } ) ;
+	competitor( 'depthLimit' , function() {
+		stringifyDepthLimit( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify() uniqueRefNotation mode' , function() {
-		json.stringify( sample , { mode: 'uniqueRefNotation' } ) ;
+	competitor( 'circularRefNotation' , function() {
+		stringifyCircularRefNotation( sample ) ;
+	} ) ;
+	
+	competitor( 'uniqueRefNotation' , function() {
+		stringifyUniqueRefNotation( sample ) ;
 	} ) ;
 } ) ;
 
