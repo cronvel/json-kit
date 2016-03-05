@@ -10,6 +10,10 @@ var stringifyDepthLimit = json.stringifier( { depthLimit: 20 } ) ;
 var stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
 var stringifyUniqueRefNotation = json.stringifier( { uniqueRefNotation: true } ) ;
 
+var parseRaw = json.parser() ;
+var parseDepthLimit = json.parser( { depthLimit: 20 } ) ;
+var parseRefNotation = json.parser( { refNotation: true } ) ;
+
 
 
 benchmark( 'JSON stringify(), real-world normal object' , function() {
@@ -53,16 +57,20 @@ benchmark( 'JSON parse(), real-world normal JSON' , function() {
 	} ) ;
 	
 	var alt = require( './v0.1.7/json.js' ) ;
-	competitor( 'json.parse() v0.1.7' , function() {
+	competitor( 'v0.1.7' , function() {
 		alt.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse() refNotation mode' , function() {
-		json.parse( sample , { mode: 'refNotation' } ) ;
+	competitor( 'depthLimit' , function() {
+		parseDepthLimit( sample ) ;
+	} ) ;
+	
+	competitor( 'refNotation' , function() {
+		parseRefNotation( sample ) ;
 	} ) ;
 } ) ;
 
