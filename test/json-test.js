@@ -211,43 +211,45 @@ describe( "JSON parse" , function() {
 	
 	it( "basic test" , function() {
 		
-		testParseEq( 'null' ) ;
-		testParseEq( 'true' ) ;
-		testParseEq( 'false' ) ;
+		var parse = json.parser( {} ) ;
 		
-		testParseEq( '0' ) ;
-		testParseEq( '1' ) ;
-		testParseEq( '123' ) ;
-		testParseEq( '-123' ) ;
-		testParseEq( '123.456' ) ;
-		testParseEq( '-123.456' ) ;
-		testParseEq( '0.123' ) ;
-		testParseEq( '-0.123' ) ;
-		testParseEq( '0.00123' ) ;
-		testParseEq( '-0.00123' ) ;
+		testParseEq( parse , 'null' ) ;
+		testParseEq( parse , 'true' ) ;
+		testParseEq( parse , 'false' ) ;
 		
-		testParseEq( '""' ) ;
-		testParseEq( '"abc"' ) ;
-		testParseEq( '"abc\\"def"' ) ;
-		testParseEq( '"abc\\ndef\\tghi\\rjkl"' ) ;
-		testParseEq( '"abc\\u0000\\u007f\\u0061def\\"\\"jj"' ) ;
+		testParseEq( parse , '0' ) ;
+		testParseEq( parse , '1' ) ;
+		testParseEq( parse , '123' ) ;
+		testParseEq( parse , '-123' ) ;
+		testParseEq( parse , '123.456' ) ;
+		testParseEq( parse , '-123.456' ) ;
+		testParseEq( parse , '0.123' ) ;
+		testParseEq( parse , '-0.123' ) ;
+		testParseEq( parse , '0.00123' ) ;
+		testParseEq( parse , '-0.00123' ) ;
 		
-		testParseEq( '{}' ) ;
-		testParseEq( '{"a":1}' ) ;
-		testParseEq( '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false}' ) ;
-		testParseEq( '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false,"sub":{"g":123,"h":{},"i":{"j":"J!"}}}' ) ;
+		testParseEq( parse , '""' ) ;
+		testParseEq( parse , '"abc"' ) ;
+		testParseEq( parse , '"abc\\"def"' ) ;
+		testParseEq( parse , '"abc\\ndef\\tghi\\rjkl"' ) ;
+		testParseEq( parse , '"abc\\u0000\\u007f\\u0061def\\"\\"jj"' ) ;
 		
-		testParseEq( '[]' ) ;
-		testParseEq( '[1,2,3]' ) ;
-		testParseEq( '[-12,1.5,"toto",true,false,null,0.3]' ) ;
-		testParseEq( '[-12,1.5,"toto",true,false,null,0.3,[1,2,3],[4,5,6]]' ) ;
+		testParseEq( parse , '{}' ) ;
+		testParseEq( parse , '{"a":1}' ) ;
+		testParseEq( parse , '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false}' ) ;
+		testParseEq( parse , '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false,"sub":{"g":123,"h":{},"i":{"j":"J!"}}}' ) ;
 		
-		testParseEq( '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false,"sub":{"g":123,"h":[1,2,3],"i":["j","J!"]}}' ) ;
-		testParseEq( '[-12,1.5,"toto",{"g":123,"h":[1,2,3],"i":["j","J!"]},true,false,null,0.3,[1,2,3],[4,5,6]]' ) ;
+		testParseEq( parse , '[]' ) ;
+		testParseEq( parse , '[1,2,3]' ) ;
+		testParseEq( parse , '[-12,1.5,"toto",true,false,null,0.3]' ) ;
+		testParseEq( parse , '[-12,1.5,"toto",true,false,null,0.3,[1,2,3],[4,5,6]]' ) ;
 		
-		testParseEq( ' { "a" :   1 , "b":  \n"string",\n  "c":"" \t,\n\t"d" :   null,"e":true,   "f"   :   false  , "sub":{"g":123,"h":[1,2,3],"i":["j","J!"]}}' ) ;
+		testParseEq( parse , '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false,"sub":{"g":123,"h":[1,2,3],"i":["j","J!"]}}' ) ;
+		testParseEq( parse , '[-12,1.5,"toto",{"g":123,"h":[1,2,3],"i":["j","J!"]},true,false,null,0.3,[1,2,3],[4,5,6]]' ) ;
 		
-		testParseEq( fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ) ;
+		testParseEq( parse , ' { "a" :   1 , "b":  \n"string",\n  "c":"" \t,\n\t"d" :   null,"e":true,   "f"   :   false  , "sub":{"g":123,"h":[1,2,3],"i":["j","J!"]}}' ) ;
+		
+		testParseEq( parse , fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ) ;
 	} ) ;
 	
 	it( "depth limit" , function() {
@@ -255,15 +257,16 @@ describe( "JSON parse" , function() {
 		var oJson ;
 		
 		oJson = '{"a":1,"b":2,"c":{"d":4,"e":5},"f":6}' ;
-		expect( json.parse( oJson , { depth: 0 } ) ).to.be( undefined ) ;
-		expect( json.parse( oJson , { depth: 1 } ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
-		expect( json.parse( oJson , { depth: 2 } ) ).to.eql( {a:1,b:2,c:{d:4,e:5},f:6} ) ;
+		expect( json.parser( { depth: 1 } )( oJson ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
+		expect( json.parser( { depth: 2 } )( oJson ) ).to.eql( {a:1,b:2,c:{d:4,e:5},f:6} ) ;
 		
 		oJson = '{"a":1,"b":2,"c":{"nasty\\n\\"key}}]][{":"nasty[value{}}}]]"},"f":6}' ;
-		expect( json.parse( oJson , { depth: 1 } ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
+		expect( json.parser( { depth: 1 } )( oJson ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
 	} ) ;
 	
 	it( "circular ref notation" , function() {
+		
+		var parse = json.parser( { refNotation: true } ) ;
 		
 		var aJson = '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}}' ;
 		var oJson = '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":-2}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"@@ref@@":-2}}}}' ;
@@ -286,7 +289,7 @@ describe( "JSON parse" , function() {
 			b: b
 		} ;
 		
-		var aParsed = json.parse( aJson , { mode: "refNotation" } ) ;
+		var aParsed = parse( aJson ) ;
 		expect( aParsed ).to.only.have.keys( [ 'k1' , 'k2' , 'k3' ] ) ;
 		expect( aParsed.k1 ).to.be( 1 ) ;
 		expect( aParsed.k2 ).to.be( 2 ) ;
@@ -295,7 +298,7 @@ describe( "JSON parse" , function() {
 		expect( aParsed.k3.k5 ).to.be( 2 ) ;
 		expect( aParsed.k3.k6 ).to.be( aParsed ) ;
 		
-		var oParsed = json.parse( oJson , { mode: "refNotation" } ) ;
+		var oParsed = parse( oJson ) ;
 		expect( oParsed ).to.only.have.keys( [ 'a' , 'b' ] ) ;
 		expect( oParsed.a ).to.only.have.keys( [ 'k1' , 'k2' , 'k3' ] ) ;
 		expect( oParsed.a.k1 ).to.be( 1 ) ;
@@ -305,12 +308,11 @@ describe( "JSON parse" , function() {
 		expect( oParsed.b.k5 ).to.be( 2 ) ;
 		expect( oParsed.a.k3.k6 ).to.be( oParsed.a ) ;
 		expect( oParsed.b.k6.k3 ).to.be( oParsed.b ) ;
-		
-		//expect( oParsed.a.k3 ).to.be( oParsed.b ) ;	// not true in this mode
-		//expect( oParsed.b.k6 ).to.be( oParsed.a ) ;	// not true in this mode
 	} ) ;
 	
 	it( "unique ref notation" , function() {
+		
+		var parse = json.parser( { refNotation: true } ) ;
 		
 		var aJson = '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":[]}}}' ;
 		var oJson = '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ;
@@ -333,7 +335,7 @@ describe( "JSON parse" , function() {
 			b: b
 		} ;
 		
-		var aParsed = json.parse( aJson , { mode: "refNotation" } ) ;
+		var aParsed = parse( aJson ) ;
 		//console.log( '\n\naParsed:' , aParsed ) ;
 		expect( aParsed ).to.only.have.keys( [ 'k1' , 'k2' , 'k3' ] ) ;
 		expect( aParsed.k1 ).to.be( 1 ) ;
@@ -345,7 +347,7 @@ describe( "JSON parse" , function() {
 		
 		//console.log( "\n\n" ) ;
 		
-		var oParsed = json.parse( oJson , { mode: "refNotation" } ) ;
+		var oParsed = parse( oJson ) ;
 		//console.log( '\n\noParsed:' , oParsed ) ;
 		expect( oParsed ).to.only.have.keys( [ 'a' , 'b' ] ) ;
 		expect( oParsed.a ).to.only.have.keys( [ 'k1' , 'k2' , 'k3' ] ) ;
@@ -367,7 +369,10 @@ describe( "JSON parse" , function() {
 describe( "JSON stringify + parse with the ref notation" , function() {
 	
 	it( "big test" , function() {
-		// Big test
+		
+		var stringify = json.stringifier( { uniqueRefNotation: true } ) ;
+		var parse = json.parser( { refNotation: true } ) ;
+		
 		var sample = require( '../sample/sample1.json' ) ;
 		var sampleJson = JSON.stringify( sample ) ;
 		
@@ -383,13 +388,13 @@ describe( "JSON stringify + parse with the ref notation" , function() {
 			}
 		} ;
 		
-		var json1 = json.stringify( o , { mode: "uniqueRefNotation" } ) ;
+		var json1 = stringify( o ) ;
 		
 		expect( json1 ).to.be(
 			'{"a":' + sampleJson + ',"b":{"c":"some data","d":{"@@ref@@":["a"]}},"e":"some data","f":{"g":["some data",{"@@ref@@":["a"]},"some data",{"@@ref@@":["a"]}]}}'
 		) ;
 		
-		var r = json.parse( json1 , { mode: "refNotation" } ) ;
+		var r = parse( json1 ) ;
 		expect( r ).to.eql( o ) ;
 		expect( r.b.d ).to.be( r.a ) ;
 		expect( r.f.g[ 1 ] ).to.be( r.a ) ;
@@ -409,13 +414,13 @@ describe( "JSON stringify + parse with the ref notation" , function() {
 			}
 		} ;
 		
-		var json2 = json.stringify( o , { mode: "uniqueRefNotation" } ) ;
+		var json2 = stringify( o ) ;
 		
 		expect( json2 ).to.be(
 			'{"a":["one",2,' + sampleJson + ',4,{"@@ref@@":["a",2]}],"b":{"c":"some data","d":{"@@ref@@":["a",2]}},"e":"some data","f":{"g":["some data",{"@@ref@@":["a",2]},"some data",{"@@ref@@":["a",2]}]}}'
 		) ;
 		
-		r = json.parse( json2 , { mode: "refNotation" } ) ;
+		r = parse( json2 ) ;
 		expect( r ).to.eql( o ) ;
 		expect( r.a[ 2 ] ).to.be( r.b.d ) ;
 		expect( r.a[ 4 ] ).to.be( r.b.d ) ;
