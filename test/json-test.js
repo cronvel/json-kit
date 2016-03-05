@@ -203,6 +203,33 @@ describe( "JSON stringify" , function() {
 		expect( stringify( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":[]}}}' ) ;
 		expect( stringify( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ) ;
 	} ) ;
+	
+	it( "indentation" , function() {
+		
+		var stringify = json.stringifier( { indent: '    ' } ) ;
+		
+		var o = {
+			a: 1,
+			b: {
+				c: 3,
+				d: 4,
+				e: {
+					f: 6,
+					g: 7
+				}
+			} ,
+			h: {
+				i: 9,
+				j: 10
+			} ,
+			k: [ 'a' , 'b' , 'c' , true , false , null , [ 0 , 1 , 2 , 3 ] , {} , [] ] ,
+			i: {} ,
+			j: []
+		} ;
+		
+		//console.log( "JSON - pretty print:\n" + stringify( o ) ) ;
+		expect( stringify( o ) ).to.be( '{\n    "a": 1,\n    "b": {\n        "c": 3,\n        "d": 4,\n        "e": {\n            "f": 6,\n            "g": 7\n        }\n    },\n    "h": {\n        "i": 9,\n        "j": 10\n    },\n    "k": [\n        "a",\n        "b",\n        "c",\n        true,\n        false,\n        null,\n        [\n            0,\n            1,\n            2,\n            3\n        ],\n        {},\n        []\n    ],\n    "i": {},\n    "j": []\n}' ) ;
+	} ) ;
 } ) ;
 
 

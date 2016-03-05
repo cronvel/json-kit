@@ -9,6 +9,7 @@ var fs = require( 'fs' ) ;
 
 
 var stringifyRaw = json.stringifier( { useToJSON: false } ) ;
+var stringifyIndent = json.stringifier( { indent: '  ' } ) ;
 var stringifyDepthLimit = json.stringifier( { depthLimit: 20 } ) ;
 var stringifyDepthLimit10 = json.stringifier( { depthLimit: 10 } ) ;
 var stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
@@ -36,6 +37,10 @@ benchmark( 'JSON stringify(), real-world normal object' , function() {
 	
 	competitor( 'raw' , function() {
 		stringifyRaw( sample ) ;
+	} ) ;
+	
+	competitor( 'indent' , function() {
+		stringifyIndent( sample ) ;
 	} ) ;
 	
 	competitor( 'depthLimit' , function() {
