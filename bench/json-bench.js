@@ -1,4 +1,7 @@
 
+/* global benchmark, competitor */
+
+
 
 var json = require( '../lib/json.js' ) ;
 var fs = require( 'fs' ) ;
@@ -7,11 +10,13 @@ var fs = require( 'fs' ) ;
 
 var stringifyRaw = json.stringifier( { useToJSON: false } ) ;
 var stringifyDepthLimit = json.stringifier( { depthLimit: 20 } ) ;
+var stringifyDepthLimit10 = json.stringifier( { depthLimit: 10 } ) ;
 var stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
 var stringifyUniqueRefNotation = json.stringifier( { uniqueRefNotation: true } ) ;
 
 var parseRaw = json.parser() ;
 var parseDepthLimit = json.parser( { depthLimit: 20 } ) ;
+var parseDepthLimit10 = json.parser( { depthLimit: 10 } ) ;
 var parseRefNotation = json.parser( { refNotation: true } ) ;
 
 
@@ -86,8 +91,8 @@ benchmark( 'JSON stringify(), flat object with big strings' , function() {
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify()' , function() {
-		json.stringify( sample ) ;
+	competitor( 'raw' , function() {
+		stringifyRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -101,8 +106,8 @@ benchmark( 'JSON stringify(), flat object with big strings and full of bad chars
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify()' , function() {
-		json.stringify( sample ) ;
+	competitor( 'raw' , function() {
+		stringifyRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -116,8 +121,8 @@ benchmark( 'JSON stringify(), big flat object' , function() {
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify()' , function() {
-		json.stringify( sample ) ;
+	competitor( 'raw' , function() {
+		stringifyRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -131,8 +136,8 @@ benchmark( 'JSON stringify(), big deep object' , function() {
 		JSON.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify()' , function() {
-		json.stringify( sample , { depth: Infinity } ) ;
+	competitor( 'raw' , function() {
+		stringifyRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -147,16 +152,16 @@ benchmark( 'JSON stringify(), big deep object (1000) with depth limit' , functio
 	} ) ;
 	
 	var alt = require( './v0.1.7/json.js' ) ;
-	competitor( 'json.parse() v0.1.7 (dont feature depth limit)' , function() {
+	competitor( 'v0.1.7 (dont feature depth limit)' , function() {
 		alt.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify() without depth limit' , function() {
-		json.stringify( sample , { depth: Infinity } ) ;
+	competitor( 'raw (without depth limit)' , function() {
+		stringifyRaw( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse() with depth limited to 10' , function() {
-		json.stringify( sample , { depth: 10 } ) ;
+	competitor( 'detphLimit 10' , function() {
+		stringifyDepthLimit10( sample ) ;
 	} ) ;
 } ) ;
 
@@ -183,16 +188,16 @@ benchmark( 'JSON stringify(), redundancy (objects that are in multiple places in
 	} ) ;
 	
 	var alt = require( './v0.1.7/json.js' ) ;
-	competitor( 'json.stringify() v0.1.7' , function() {
+	competitor( 'v0.1.7' , function() {
 		alt.stringify( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify()' , function() {
-		json.stringify( sample ) ;
+	competitor( 'raw' , function() {
+		stringifyRaw( sample ) ;
 	} ) ;
 	
-	competitor( 'json.stringify() uniqueRefNotation mode' , function() {
-		json.stringify( sample , { mode: 'uniqueRefNotation' } ) ;
+	competitor( 'uniqueRefNotation' , function() {
+		stringifyUniqueRefNotation( sample ) ;
 	} ) ;
 } ) ;
 
@@ -208,8 +213,8 @@ benchmark( 'JSON parse(), dummy false' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -223,8 +228,8 @@ benchmark( 'JSON parse(), dummy number' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -238,8 +243,8 @@ benchmark( 'JSON parse(), dummy string' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -253,8 +258,8 @@ benchmark( 'JSON parse(), dummy string one backslash' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -268,8 +273,8 @@ benchmark( 'JSON parse(), dummy string many backslashes' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -283,8 +288,8 @@ benchmark( 'JSON parse(), flat object with big strings' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -298,8 +303,8 @@ benchmark( 'JSON parse(), flat object with big strings and full of bad chars' , 
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -313,8 +318,8 @@ benchmark( 'JSON parse(), big flat object' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -328,8 +333,8 @@ benchmark( 'JSON parse(), big flat object, prettyfied' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -343,8 +348,8 @@ benchmark( 'JSON parse(), big deep object' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample , { depth: Infinity } ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -359,16 +364,16 @@ benchmark( 'JSON parse(), big deep object (1000) with depth limit' , function() 
 	} ) ;
 	
 	var alt = require( './v0.1.7/json.js' ) ;
-	competitor( 'json.parse() v0.1.7 (dont feature depth limit)' , function() {
+	competitor( 'v0.1.7 (dont feature depth limit)' , function() {
 		alt.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse() without depth limit' , function() {
-		json.parse( sample , { depth: Infinity } ) ;
+	competitor( 'raw (without depth limit)' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse() with depth limited to 10' , function() {
-		json.parse( sample , { depth: 10 } ) ;
+	competitor( 'depthLimit 10' , function() {
+		parseDepthLimit10( sample ) ;
 	} ) ;
 } ) ;
 
@@ -382,8 +387,8 @@ benchmark( 'JSON parse(), big deep object, prettyfied' , function() {
 		JSON.parse( sample ) ;
 	} ) ;
 	
-	competitor( 'json.parse()' , function() {
-		json.parse( sample , { depth: Infinity } ) ;
+	competitor( 'raw' , function() {
+		parseRaw( sample ) ;
 	} ) ;
 } ) ;
 
@@ -412,16 +417,16 @@ benchmark( 'JSON stringify() then parse(), redundancy (objects that are in multi
 	} ) ;
 	
 	var alt = require( './v0.1.7/json.js' ) ;
-	competitor( 'json.stringify() v0.1.7' , function() {
+	competitor( 'v0.1.7' , function() {
 		alt.parse( alt.stringify( sample ) ) ;
 	} ) ;
 	
-	competitor( 'json.stringify()' , function() {
-		json.parse( json.stringify( sample ) ) ;
+	competitor( 'raw' , function() {
+		parseRaw( stringifyRaw( sample ) ) ;
 	} ) ;
 	
-	competitor( 'json.stringify() uniqueRefNotation mode' , function() {
-		json.parse( json.stringify( sample , { mode: 'uniqueRefNotation' } ) , { mode: 'refNotation' } ) ;
+	competitor( 'uniqueRefNotation/refNotation' , function() {
+		parseRefNotation( stringifyUniqueRefNotation( sample ) ) ;
 	} ) ;
 } ) ;
 
