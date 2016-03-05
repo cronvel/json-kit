@@ -1,4 +1,10 @@
 
+v0.3.0
+------
+
+Now parser/stringifier are 'compiled' by a preprocessor
+
+
 v0.2.4
 ------
 

@@ -434,7 +434,9 @@ describe( "JSON stringify + parse with the ref notation" , function() {
 describe( "stringifyStream()" , function() {
 	
 	it( "empty input stream should output a stream of an empty array" , function( done ) {
-		var stream = json.stringifyStream() ;
+		
+		var stringify = json.stringifier( {} ) ;
+		var stream = json.stringifyStream( { stringifier: stringify } ) ;
 		var str = '' ;
 		
 		stream.on( 'data' , function( data ) {
@@ -450,7 +452,9 @@ describe( "stringifyStream()" , function() {
 	} ) ;
 	
 	it( "when the input stream push some object, the output stream should push an array of object" , function( done ) {
-		var stream = json.stringifyStream() ;
+		
+		var stringify = json.stringifier( {} ) ;
+		var stream = json.stringifyStream( { stringifier: stringify } ) ;
 		var str = '' ;
 		
 		stream.on( 'data' , function( data ) {
@@ -473,7 +477,9 @@ describe( "stringifyStream()" , function() {
 describe( "parseStream()" , function() {
 	
 	it( 'empty stream (i.e.: "[]")' , function( done ) {
-		var stream = json.parseStream() ;
+		
+		var parse = json.parser( {} ) ;
+		var stream = json.parseStream( { parser: parse } ) ;
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
@@ -492,7 +498,9 @@ describe( "parseStream()" , function() {
 	} ) ;
 	
 	it( "single object in one write" , function( done ) {
-		var stream = json.parseStream() ;
+		
+		var parse = json.parser( {} ) ;
+		var stream = json.parseStream( { parser: parse } ) ;
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
@@ -513,7 +521,9 @@ describe( "parseStream()" , function() {
 	} ) ;
 	
 	it( "single string in one write" , function( done ) {
-		var stream = json.parseStream() ;
+		
+		var parse = json.parser( {} ) ;
+		var stream = json.parseStream( { parser: parse } ) ;
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
@@ -532,7 +542,9 @@ describe( "parseStream()" , function() {
 	} ) ;
 	
 	it( "single object in two write" , function( done ) {
-		var stream = json.parseStream() ;
+		
+		var parse = json.parser( {} ) ;
+		var stream = json.parseStream( { parser: parse } ) ;
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
@@ -554,7 +566,9 @@ describe( "parseStream()" , function() {
 	} ) ;
 	
 	it( "single object in multiple write" , function( done ) {
-		var stream = json.parseStream() ;
+		
+		var parse = json.parser( {} ) ;
+		var stream = json.parseStream( { parser: parse } ) ;
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
@@ -583,7 +597,9 @@ describe( "parseStream()" , function() {
 	} ) ;
 	
 	it( "multiple objects in one write" , function( done ) {
-		var stream = json.parseStream() ;
+		
+		var parse = json.parser( {} ) ;
+		var stream = json.parseStream( { parser: parse } ) ;
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
@@ -609,7 +625,9 @@ describe( "parseStream()" , function() {
 	} ) ;
 	
 	it( "multiple objects in many write" , function( done ) {
-		var stream = json.parseStream() ;
+		
+		var parse = json.parser( {} ) ;
+		var stream = json.parseStream( { parser: parse } ) ;
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
@@ -649,7 +667,9 @@ describe( "parseStream()" , function() {
 	} ) ;
 	
 	it( "multiple objects in many write with nasty strings" , function( done ) {
-		var stream = json.parseStream() ;
+		
+		var parse = json.parser( {} ) ;
+		var stream = json.parseStream( { parser: parse } ) ;
 		var array = [] ;
 		
 		stream.on( 'data' , function( data ) {
