@@ -12,6 +12,7 @@ var stringifyRaw = json.stringifier( { useToJSON: false } ) ;
 var stringifyIndent = json.stringifier( { indent: '  ' } ) ;
 var stringifyDepthLimit = json.stringifier( { depthLimit: 20 } ) ;
 var stringifyDepthLimit10 = json.stringifier( { depthLimit: 10 } ) ;
+var stringifyDocumentDepthLimit = json.stringifier( { documentDepthLimit: 2 } ) ;
 var stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
 var stringifyUniqueRefNotation = json.stringifier( { uniqueRefNotation: true } ) ;
 
@@ -45,6 +46,10 @@ benchmark( 'JSON stringify(), real-world normal object' , function() {
 	
 	competitor( 'depthLimit' , function() {
 		stringifyDepthLimit( sample ) ;
+	} ) ;
+	
+	competitor( 'documentDepthLimit' , function() {
+		stringifyDocumentDepthLimit( sample ) ;
 	} ) ;
 	
 	competitor( 'circularRefNotation' , function() {

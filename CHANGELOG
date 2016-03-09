@@ -1,4 +1,10 @@
 
+v0.3.3
+------
+
+parsers/stringifiers that feature depth/documentDepth limit now accept an extra 'limit' arg that overide the parser/stringifier configuration
+
+
 v0.3.2
 ------
 

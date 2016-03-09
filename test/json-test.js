@@ -113,6 +113,8 @@ describe( "JSON stringify" , function() {
 	
 	it( "depth limit" , function() {
 		
+		var stringify = json.stringifier( { depth: 2 } ) ;
+		
 		var o = {
 			a: 1,
 			b: 2,
@@ -122,8 +124,9 @@ describe( "JSON stringify" , function() {
 			}
 		} ;
 		
-		expect( json.stringifier( { depth: 1 } )( o ) ).to.be( '{"a":1,"b":2,"c":null}' ) ;
-		expect( json.stringifier( { depth: 2 } )( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( stringify( o , 1 ) ).to.be( '{"a":1,"b":2,"c":null}' ) ;
+		expect( stringify( o , 2 ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( stringify( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
 		
 		var a = {
 			k1: 1,
@@ -143,16 +146,20 @@ describe( "JSON stringify" , function() {
 			b: b
 		} ;
 		
-		expect( json.stringifier( { depth: 2 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}' ) ;
-		expect( json.stringifier( { depth: 3 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
-		expect( json.stringifier( { depth: 4 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
+		expect( stringify( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( stringify( a , 2 ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( stringify( a , 3 ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
+		expect( stringify( a , 4 ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
 		
-		expect( json.stringifier( { depth: 2 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":null},"b":{"k4":1,"k5":2,"k6":null}}' ) ;
-		expect( json.stringifier( { depth: 3 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
-		expect( json.stringifier( { depth: 4 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
+		expect( stringify( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":null},"b":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( stringify( o , 2 ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":null},"b":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( stringify( o , 3 ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
+		expect( stringify( o , 4 ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
 	} ) ;
 	
 	it( "document depth limit (roots-db compatible)" , function() {
+		
+		var stringify = json.stringifier( { documentDepth: 2 } ) ;
 		
 		var o = {
 			a: 1,
@@ -165,13 +172,15 @@ describe( "JSON stringify" , function() {
 		
 		Object.defineProperty( o , '$' , { value: {} } ) ;
 		
-		expect( json.stringifier( { documentDepth: 1 } )( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
-		expect( json.stringifier( { documentDepth: 2 } )( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( stringify( o , 1 ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( stringify( o , 2 ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( stringify( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
 		
 		Object.defineProperty( o.c , '$' , { value: {} } ) ;
 		
-		expect( json.stringifier( { documentDepth: 1 } )( o ) ).to.be( '{"a":1,"b":2,"c":null}' ) ;
-		expect( json.stringifier( { documentDepth: 2 } )( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( stringify( o , 1 ) ).to.be( '{"a":1,"b":2,"c":null}' ) ;
+		expect( stringify( o , 2 ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( stringify( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
 		
 		var a = {
 			k1: 1,
@@ -195,13 +204,15 @@ describe( "JSON stringify" , function() {
 		Object.defineProperty( a , '$' , { value: {} } ) ;
 		Object.defineProperty( b , '$' , { value: {} } ) ;
 		
-		expect( json.stringifier( { depth: 2 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}' ) ;
-		expect( json.stringifier( { depth: 3 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
-		expect( json.stringifier( { depth: 4 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
+		expect( stringify( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( stringify( a , 2 ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( stringify( a , 3 ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
+		expect( stringify( a , 4 ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
 		
-		expect( json.stringifier( { depth: 2 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":null},"b":{"k4":1,"k5":2,"k6":null}}' ) ;
-		expect( json.stringifier( { depth: 3 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
-		expect( json.stringifier( { depth: 4 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
+		expect( stringify( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":null},"b":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( stringify( o , 2 ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":null},"b":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( stringify( o , 3 ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
+		expect( stringify( o , 4 ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
 	} ) ;
 	
 	it( "circular ref notation" , function() {
@@ -333,11 +344,14 @@ describe( "JSON parse" , function() {
 	
 	it( "depth limit" , function() {
 		
+		var parse = json.parser( { depth: 2 } ) ;
+		
 		var oJson ;
 		
 		oJson = '{"a":1,"b":2,"c":{"d":4,"e":5},"f":6}' ;
-		expect( json.parser( { depth: 1 } )( oJson ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
-		expect( json.parser( { depth: 2 } )( oJson ) ).to.eql( {a:1,b:2,c:{d:4,e:5},f:6} ) ;
+		expect( parse( oJson , 1 ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
+		expect( parse( oJson , 2 ) ).to.eql( {a:1,b:2,c:{d:4,e:5},f:6} ) ;
+		expect( parse( oJson ) ).to.eql( {a:1,b:2,c:{d:4,e:5},f:6} ) ;
 		
 		oJson = '{"a":1,"b":2,"c":{"nasty\\n\\"key}}]][{":"nasty[value{}}}]]"},"f":6}' ;
 		expect( json.parser( { depth: 1 } )( oJson ) ).to.eql( {a:1,b:2,c:undefined,f:6} ) ;
