@@ -152,6 +152,58 @@ describe( "JSON stringify" , function() {
 		expect( json.stringifier( { depth: 4 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
 	} ) ;
 	
+	it( "document depth limit (roots-db compatible)" , function() {
+		
+		var o = {
+			a: 1,
+			b: 2,
+			c: {
+				d: 4,
+				e: 5
+			}
+		} ;
+		
+		Object.defineProperty( o , '$' , { value: {} } ) ;
+		
+		expect( json.stringifier( { documentDepth: 1 } )( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		expect( json.stringifier( { documentDepth: 2 } )( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		
+		Object.defineProperty( o.c , '$' , { value: {} } ) ;
+		
+		expect( json.stringifier( { documentDepth: 1 } )( o ) ).to.be( '{"a":1,"b":2,"c":null}' ) ;
+		expect( json.stringifier( { documentDepth: 2 } )( o ) ).to.be( '{"a":1,"b":2,"c":{"d":4,"e":5}}' ) ;
+		
+		var a = {
+			k1: 1,
+			k2: 2
+		} ;
+		
+		var b = {
+			k4: 1,
+			k5: 2
+		} ;
+		
+		a.k3 = b ;
+		b.k6 = a ;
+		
+		o = {
+			a: a,
+			b: b
+		} ;
+		
+		Object.defineProperty( o , '$' , { value: {} } ) ;
+		Object.defineProperty( a , '$' , { value: {} } ) ;
+		Object.defineProperty( b , '$' , { value: {} } ) ;
+		
+		expect( json.stringifier( { depth: 2 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( json.stringifier( { depth: 3 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
+		expect( json.stringifier( { depth: 4 } )( a ) ).to.be( '{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
+		
+		expect( json.stringifier( { depth: 2 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":null},"b":{"k4":1,"k5":2,"k6":null}}' ) ;
+		expect( json.stringifier( { depth: 3 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}}' ) ;
+		expect( json.stringifier( { depth: 4 } )( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":null}}},"b":{"k4":1,"k5":2,"k6":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":null}}}}' ) ;
+	} ) ;
+	
 	it( "circular ref notation" , function() {
 		
 		var stringify = json.stringifier( { circularRefNotation: true } ) ;
