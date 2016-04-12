@@ -267,6 +267,53 @@ describe( "JSON stringify" , function() {
 		expect( stringify( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ) ;
 	} ) ;
 	
+	it( "zzz object masks" , function() {
+		
+		var stringify = json.stringifier( { objectMask: true } ) ;
+		
+		var o = {
+			a: 'A',
+			b: 2,
+			c: 'three',
+			sub: {
+				d: 'dee!',
+				f: 5,
+				sub: {
+					g: 'gee'
+				},
+				array: [
+					{
+						title: 'One two',
+						text: 'blah'
+					} ,
+					{
+						title: 'You should know that!',
+						text: 'blah'
+					} ,
+					{
+						title: '10 things about nothing',
+						text: 'blah blih'
+					}
+				]
+			}
+		} ;
+		
+		var mask = {
+			a: true ,
+			sub: {
+				f: true ,
+				sub: {
+					g: true
+				} ,
+				array: {
+					title: true
+				}
+			}
+		} ;
+		
+		expect( stringify( o , mask ) ).to.be( '{"a":"A","sub":{"f":5,"sub":{"g":"gee"},"array":[{"title":"One two"},{"title":"You should know that!"},{"title":"10 things about nothing"}]}}' ) ;
+	} ) ;
+	
 	it( "indentation" , function() {
 		
 		var stringify = json.stringifier( { indent: '    ' } ) ;
