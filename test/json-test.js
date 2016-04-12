@@ -270,8 +270,9 @@ describe( "JSON stringify" , function() {
 	it( "object masks" , function() {
 		
 		var stringify = json.stringifier( { objectMask: true } ) ;
+		var o , mask ;
 		
-		var o = {
+		o = {
 			a: 'A',
 			b: 2,
 			c: 'three',
@@ -298,7 +299,7 @@ describe( "JSON stringify" , function() {
 			}
 		} ;
 		
-		var mask = {
+		mask = {
 			a: true ,
 			sub: {
 				f: true ,
@@ -312,6 +313,17 @@ describe( "JSON stringify" , function() {
 		} ;
 		
 		expect( stringify( o , mask ) ).to.be( '{"a":"A","sub":{"f":5,"sub":{"g":"gee"},"array":[{"title":"One two"},{"title":"You should know that!"},{"title":"10 things about nothing"}]}}' ) ;
+		
+		mask = {
+			a: true ,
+			sub: {
+				f: true ,
+				sub: true ,
+				array: true
+			}
+		} ;
+		
+		expect( stringify( o , mask ) ).to.be( '{"a":"A","sub":{"f":5,"sub":{"g":"gee"},"array":[{"title":"One two","text":"blah"},{"title":"You should know that!","text":"blah"},{"title":"10 things about nothing","text":"blah blih"}]}}' ) ;
 	} ) ;
 	
 	it( "indentation" , function() {
