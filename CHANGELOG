@@ -1,4 +1,10 @@
 
+v0.4.0
+------
+
+Breaking change: objectMask -> propertyMask, as this is more explicit
+
+
 v0.3.6
 ------
 

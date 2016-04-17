@@ -267,9 +267,9 @@ describe( "JSON stringify" , function() {
 		expect( stringify( o ) ).to.be( '{"a":{"k1":1,"k2":2,"k3":{"k4":1,"k5":2,"k6":{"@@ref@@":["a"]}}},"b":{"@@ref@@":["a","k3"]}}' ) ;
 	} ) ;
 	
-	it( "object masks" , function() {
+	it( "property masks" , function() {
 		
-		var stringify = json.stringifier( { objectMask: true } ) ;
+		var stringify = json.stringifier( { propertyMask: true } ) ;
 		var o , mask ;
 		
 		o = {
