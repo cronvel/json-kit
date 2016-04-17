@@ -10,15 +10,15 @@ var fs = require( 'fs' ) ;
 
 var stringifyRaw = json.stringifier( { useToJSON: false } ) ;
 var stringifyIndent = json.stringifier( { indent: '  ' } ) ;
-var stringifyDepthLimit = json.stringifier( { depthLimit: 20 } ) ;
-var stringifyDepthLimit10 = json.stringifier( { depthLimit: 10 } ) ;
-var stringifyDocumentDepthLimit = json.stringifier( { documentDepthLimit: 2 } ) ;
+var stringifyDepthLimit = json.stringifier( { depth: 20 } ) ;
+var stringifyDepthLimit10 = json.stringifier( { depth: 10 } ) ;
+var stringifyDocumentDepthLimit = json.stringifier( { documentDepth: 2 } ) ;
 var stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
 var stringifyUniqueRefNotation = json.stringifier( { uniqueRefNotation: true } ) ;
 
 var parseRaw = json.parser() ;
-var parseDepthLimit = json.parser( { depthLimit: 20 } ) ;
-var parseDepthLimit10 = json.parser( { depthLimit: 10 } ) ;
+var parseDepthLimit = json.parser( { depth: 20 } ) ;
+var parseDepthLimit10 = json.parser( { depth: 10 } ) ;
 var parseRefNotation = json.parser( { refNotation: true } ) ;
 
 
@@ -170,7 +170,7 @@ benchmark( 'JSON stringify(), big deep object (1000) with depth limit' , functio
 		stringifyRaw( sample ) ;
 	} ) ;
 	
-	competitor( 'detphLimit 10' , function() {
+	competitor( 'depthLimit 10' , function() {
 		stringifyDepthLimit10( sample ) ;
 	} ) ;
 } ) ;
