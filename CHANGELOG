@@ -1,4 +1,10 @@
 
+v0.4.5
+------
+
+Bugfix: unterminated string now throw an error
+
+
 v0.4.4
 ------
 
