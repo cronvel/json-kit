@@ -29,5 +29,12 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cronvel/json-kit/issues"
+  },
+  "copyright": {
+    "title": "JSON Kit",
+    "years": [
+      2016
+    ],
+    "owner": "Cédric Ronvel"
   }
 }
