@@ -1,6 +1,6 @@
 {
   "name": "json-kit",
-  "version": "0.5.0",
+  "version": "0.5.2",
   "description": "JSON stringify(), parse() and more in pure JS.",
   "main": "lib/json.js",
   "directories": {
@@ -8,15 +8,13 @@
     "bench": "bench"
   },
   "dependencies": {
-    "smart-preprocessor": "^0.3.0"
+    "smart-preprocessor": "^0.3.1"
   },
   "devDependencies": {
-    "expect.js": "^0.3.1",
-    "jshint": "^2.9.4",
-    "mocha": "^3.2.0"
+    "expect.js": "^0.3.1"
   },
   "scripts": {
-    "test": "mocha -R dot"
+    "test": "tea-time -R dot"
   },
   "repository": {
     "type": "git",
