@@ -324,7 +324,7 @@ describe( "JSON stringify" , () => {
 	} ) ;
 
 	it( "local enumerate" , () => {
-		var stringify = json.stringifier( { localEnumerate: true } ) ;
+		var stringify = json.stringifier( { localEnumerate: true , documentDepth: 3 } ) ;
 		var stringifyStd = json.stringifier() ;
 		var o , mask ;
 
@@ -354,6 +354,8 @@ describe( "JSON stringify" , () => {
 				]
 			}
 		} ;
+		//stringify( o , mask ) ;
+		//return ;
 
 		Object.defineProperty( o , '__enumerate__' , { configurable: true , value: () => [ 'a' , 'b' ] } ) ;
 		expect( stringify( o , mask ) ).to.be( '{"a":"A","b":2}' ) ;
@@ -363,6 +365,20 @@ describe( "JSON stringify" , () => {
 		Object.defineProperty( o.sub , '__enumerate__' , { configurable: true , value: () => [ 'f' , 'sub' ] } ) ;
 		expect( stringify( o , mask ) ).to.be( '{"a":"A","sub":{"f":5,"sub":{"g":"gee"}}}' ) ;
 		expect( stringifyStd( o , mask ) ).to.be( '{"a":"A","b":2,"c":"three","sub":{"d":"dee!","f":5,"sub":{"g":"gee"},"array":[{"title":"One two","text":"blah"},{"title":"You should know that!","text":"blah"},{"title":"10 things about nothing","text":"blah blih"}]}}' ) ;
+		
+		// Test the documentDepth feature
+		Object.defineProperty( o , '_' , { configurable: true , value: {} } ) ;
+		Object.defineProperty( o.sub , '_' , { configurable: true , value: {} } ) ;
+		Object.defineProperty( o , '__enumerate__' , { configurable: true , value: ( depth ) => {
+			return [ 'a' , 'sub' ] ;
+		} } ) ;
+		Object.defineProperty( o.sub , '__enumerate__' , { configurable: true , value: ( depth ) => {
+			return depth ? [ 'd' , 'sub' ] : [ 'sub' ] ;
+		} } ) ;
+		expect( stringify( o , mask ) ).to.be( '{"a":"A","sub":{"d":"dee!","sub":{"g":"gee"}}}' ) ;	// Depth: 1
+		expect( stringify( o.sub , mask ) ).to.be( '{"sub":{"g":"gee"}}' ) ;	// Depth:0
+		expect( stringifyStd( o , mask ) ).to.be( '{"a":"A","b":2,"c":"three","sub":{"d":"dee!","f":5,"sub":{"g":"gee"},"array":[{"title":"One two","text":"blah"},{"title":"You should know that!","text":"blah"},{"title":"10 things about nothing","text":"blah blih"}]}}' ) ;
+		expect( stringifyStd( o.sub , mask ) ).to.be( '{"d":"dee!","f":5,"sub":{"g":"gee"},"array":[{"title":"One two","text":"blah"},{"title":"You should know that!","text":"blah"},{"title":"10 things about nothing","text":"blah blih"}]}' ) ;
 	} ) ;
 
 	it( "indentation" , () => {
