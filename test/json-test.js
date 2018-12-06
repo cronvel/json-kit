@@ -373,7 +373,7 @@ describe( "JSON stringify" , () => {
 			return [ 'a' , 'sub' ] ;
 		} } ) ;
 		Object.defineProperty( o.sub , '__enumerate__' , { configurable: true , value: ( depth ) => {
-			return depth ? [ 'd' , 'sub' ] : [ 'sub' ] ;
+			return depth > 1 ? [ 'd' , 'sub' ] : [ 'sub' ] ;
 		} } ) ;
 		expect( stringify( o , mask ) ).to.be( '{"a":"A","sub":{"d":"dee!","sub":{"g":"gee"}}}' ) ;	// Depth: 1
 		expect( stringify( o.sub , mask ) ).to.be( '{"sub":{"g":"gee"}}' ) ;	// Depth:0
