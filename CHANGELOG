@@ -1,4 +1,11 @@
 
+v0.6.0
+------
+
+Breaking: update the 'documentDepth' option to match new RootsDB standard
+New stringifier option: 'localEnumerate'
+
+
 v0.5.4
 ------
 
