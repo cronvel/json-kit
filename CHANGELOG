@@ -1,4 +1,10 @@
 
+v0.6.3
+------
+
+Bugfix: functions are turned into null
+
+
 v0.6.2
 ------
 

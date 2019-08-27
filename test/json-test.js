@@ -24,7 +24,6 @@
 	SOFTWARE.
 */
 
-/* jshint unused:false */
 /* global describe, it, before, after */
 
 "use strict" ;
@@ -32,7 +31,7 @@
 
 
 var fs = require( 'fs' ) ;
-var json = require( '../lib/json.js' ) ;
+var json = require( '..' ) ;
 
 
 
@@ -113,6 +112,11 @@ describe( "JSON stringify" , () => {
 		//testStringifyEq( stringify , require( '../sample/garbageStringObject.js' ) ) ;
 	} ) ;
 
+	it( "functions" , () => {
+		var stringify = json.stringifier( {} ) ;
+		expect( stringify( { a: 1 , fn: () => null } ) ).to.be( '{"a":1,"fn":null}' ) ;
+	} ) ;
+	
 	it( "depth limit" , () => {
 		var stringify = json.stringifier( { depth: 2 } ) ;
 
