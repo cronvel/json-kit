@@ -3,23 +3,24 @@
 
 
 
-var json = require( '../lib/json.js' ) ;
-var fs = require( 'fs' ) ;
+const json = require( '../lib/json.js' ) ;
+const fs = require( 'fs' ) ;
 
 
 
-var stringifyRaw = json.stringifier( { useToJSON: false } ) ;
-var stringifyIndent = json.stringifier( { indent: '  ' } ) ;
-var stringifyDepthLimit = json.stringifier( { depth: 20 } ) ;
-var stringifyDepthLimit10 = json.stringifier( { depth: 10 } ) ;
-var stringifyDocumentDepthLimit = json.stringifier( { documentDepth: 2 } ) ;
-var stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
-var stringifyUniqueRefNotation = json.stringifier( { uniqueRefNotation: true } ) ;
+const stringifyRaw = json.stringifier( { useToJSON: false } ) ;
+const stringifyIndent = json.stringifier( { indent: '  ' } ) ;
+const stringifyDepthLimit = json.stringifier( { depth: 20 } ) ;
+const stringifyDepthLimit10 = json.stringifier( { depth: 10 } ) ;
+const stringifyDocumentDepthLimit = json.stringifier( { documentDepth: 2 } ) ;
+const stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
+const stringifyUniqueRefNotation = json.stringifier( { uniqueRefNotation: true } ) ;
+const stringifyOrderedKeys = json.stringifier( { orderedKeys: true } ) ;
 
-var parseRaw = json.parser() ;
-var parseDepthLimit = json.parser( { depth: 20 } ) ;
-var parseDepthLimit10 = json.parser( { depth: 10 } ) ;
-var parseRefNotation = json.parser( { refNotation: true } ) ;
+const parseRaw = json.parser() ;
+const parseDepthLimit = json.parser( { depth: 20 } ) ;
+const parseDepthLimit10 = json.parser( { depth: 10 } ) ;
+const parseRefNotation = json.parser( { refNotation: true } ) ;
 
 
 
@@ -31,6 +32,10 @@ benchmark( 'JSON stringify(), real-world normal object' , function() {
 		JSON.stringify( sample ) ;
 	} ) ;
 	
+	competitor( 'Native JSON.stringify() with indent' , function() {
+		JSON.stringify( sample , null , '  ' ) ;
+	} ) ;
+
 	var alt = require( './v0.1.7/json.js' ) ;
 	competitor( 'v0.1.7' , function() {
 		alt.stringify( sample ) ;
@@ -58,6 +63,10 @@ benchmark( 'JSON stringify(), real-world normal object' , function() {
 	
 	competitor( 'uniqueRefNotation' , function() {
 		stringifyUniqueRefNotation( sample ) ;
+	} ) ;
+
+	competitor( 'orderedKeys' , function() {
+		stringifyOrderedKeys( sample ) ;
 	} ) ;
 } ) ;
 

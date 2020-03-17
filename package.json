@@ -1,6 +1,6 @@
 {
   "name": "json-kit",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "JSON stringify(), parse() and more in pure JS.",
   "main": "lib/json.js",
   "directories": {
