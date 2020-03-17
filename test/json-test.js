@@ -385,6 +385,45 @@ describe( "JSON stringify" , () => {
 		expect( stringifyStd( o.sub , mask ) ).to.be( '{"d":"dee!","f":5,"sub":{"g":"gee"},"array":[{"title":"One two","text":"blah"},{"title":"You should know that!","text":"blah"},{"title":"10 things about nothing","text":"blah blih"}]}' ) ;
 	} ) ;
 
+	it( "ordered keys" , () => {
+		var stringify = json.stringifier( { orderedKeys: true } ) ;
+		var stringifyStd = json.stringifier() ;
+		var o ;
+
+		o = {
+			akey: 'A' ,
+			anotherkey: 1 ,
+			yetanotherkey: 2 ,
+			aKeyCamel: 'three' ,
+			AKEY: 'four' ,
+			sub: {
+				someKey: 'five' ,
+				omgAKey: 6 ,
+				sub: {
+					whatAKey: 'seven' ,
+					stillAKey: 'eight'
+				} ,
+				array: [
+					{
+						title: 'One two' ,
+						text: 'blah'
+					} ,
+					{
+						title: 'You should know that!' ,
+						text: 'blah'
+					} ,
+					{
+						title: '10 things about nothing' ,
+						text: 'blah blih'
+					}
+				]
+			}
+		} ;
+
+		expect( stringifyStd( o ) ).to.be( '{"akey":"A","anotherkey":1,"yetanotherkey":2,"aKeyCamel":"three","AKEY":"four","sub":{"someKey":"five","omgAKey":6,"sub":{"whatAKey":"seven","stillAKey":"eight"},"array":[{"title":"One two","text":"blah"},{"title":"You should know that!","text":"blah"},{"title":"10 things about nothing","text":"blah blih"}]}}' ) ;
+		expect( stringify( o ) ).to.be( '{"akey":"A","AKEY":"four","aKeyCamel":"three","anotherkey":1,"sub":{"array":[{"text":"blah","title":"One two"},{"text":"blah","title":"You should know that!"},{"text":"blah blih","title":"10 things about nothing"}],"omgAKey":6,"someKey":"five","sub":{"stillAKey":"eight","whatAKey":"seven"}},"yetanotherkey":2}' ) ;
+	} ) ;
+
 	it( "indentation" , () => {
 		var stringify = json.stringifier( { indent: '    ' } ) ;
 
@@ -911,5 +950,4 @@ describe( "parseStream()" , () => {
 		stream.end() ;
 	} ) ;
 } ) ;
-
 
