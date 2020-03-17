@@ -1,6 +1,6 @@
 {
   "name": "json-kit",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "JSON stringify(), parse() and more in pure JS.",
   "main": "lib/json.js",
   "directories": {
@@ -8,7 +8,7 @@
     "bench": "bench"
   },
   "dependencies": {
-    "smart-preprocessor": "^0.3.3"
+    "smart-preprocessor": "^0.3.4"
   },
   "devDependencies": {},
   "scripts": {
