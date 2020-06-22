@@ -1,6 +1,8 @@
 
 /* global benchmark, competitor */
 
+"use strict" ;
+
 
 
 const json = require( '../lib/json.js' ) ;
@@ -448,6 +450,4 @@ benchmark( 'JSON stringify() then parse(), redundancy (objects that are in multi
 		parseRefNotation( stringifyUniqueRefNotation( sample ) ) ;
 	} ) ;
 } ) ;
-
-
 
