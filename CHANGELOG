@@ -1,4 +1,10 @@
 
+v0.6.6
+------
+
+Add a CLI to generate JSON stringifier/parser builds
+
+
 v0.6.5
 ------
 

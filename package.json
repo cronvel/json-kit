@@ -1,16 +1,19 @@
 {
   "name": "json-kit",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "JSON stringify(), parse() and more in pure JS.",
   "main": "lib/json.js",
   "directories": {
     "test": "test",
     "bench": "bench"
   },
+  "bin": {
+    "json-kit-builder": "./bin/json-kit-builder"
+  },
   "dependencies": {
+    "minimist": "^1.2.6",
     "smart-preprocessor": "^0.3.4"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "tea-time -R dot"
   },
@@ -37,7 +40,7 @@
     "title": "JSON Kit",
     "years": [
       2016,
-      2020
+      2022
     ],
     "owner": "Cédric Ronvel"
   }
