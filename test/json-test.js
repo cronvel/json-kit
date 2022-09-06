@@ -55,6 +55,15 @@ function testParseEq( parse , s ) {
 		) ) ;
 }
 
+function testParseEqAlt( parse , s , s2 ) {
+	expect( JSON.stringify(
+		parse( s )
+	) )
+		.to.be( JSON.stringify(
+			JSON.parse( s2 )
+		) ) ;
+}
+
 
 
 
@@ -678,6 +687,109 @@ describe( "JSON stringify + parse with the ref notation" , () => {
 		expect( r.a[ 4 ] ).to.be( r.b.d ) ;
 		expect( r.f.g[ 1 ] ).to.be( r.b.d ) ;
 		expect( r.f.g[ 3 ] ).to.be( r.b.d ) ;
+	} ) ;
+} ) ;
+
+
+
+describe( "LAXON stringify + parse with the ref notation" , () => {
+	it( "LAXON unquoted keys test" , () => {
+		var parse = json.parser( { laxonUnquotedKeys: true } ) ;
+
+		testParseEq( parse , 'null' ) ;
+		testParseEq( parse , 'true' ) ;
+		testParseEq( parse , 'false' ) ;
+
+		testParseEq( parse , '0' ) ;
+		testParseEq( parse , '1' ) ;
+		testParseEq( parse , '123' ) ;
+		testParseEq( parse , '-123' ) ;
+		testParseEq( parse , '123.456' ) ;
+		testParseEq( parse , '-123.456' ) ;
+		testParseEq( parse , '0.123' ) ;
+		testParseEq( parse , '-0.123' ) ;
+		testParseEq( parse , '0.00123' ) ;
+		testParseEq( parse , '-0.00123' ) ;
+
+		testParseEq( parse , '""' ) ;
+		testParseEq( parse , '"abc"' ) ;
+		testParseEq( parse , '"abc\\"def"' ) ;
+		testParseEq( parse , '"abc\\ndef\\tghi\\rjkl"' ) ;
+		testParseEq( parse , '"abc\\u0000\\u007f\\u0061def\\"\\"jj"' ) ;
+
+		testParseEq( parse , '{}' ) ;
+		testParseEq( parse , '{"a":1}' ) ;
+		testParseEq( parse , '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false}' ) ;
+		testParseEq( parse , '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false,"sub":{"g":123,"h":{},"i":{"j":"J!"}}}' ) ;
+
+		testParseEqAlt( parse ,
+			'{a:1}' ,
+			'{"a":1}'
+		) ;
+		testParseEqAlt( parse ,
+			'{a:1,key:"string", key2 :"", key3 :null, _$TrAnG3_k3Y:true}' ,
+			'{"a":1,"key":"string","key2":"","key3":null,"_$TrAnG3_k3Y":true}'
+		) ;
+		testParseEqAlt( parse ,
+			'{key:"string", sub : {  _$TrAnG3_k3Y:true } }' ,
+			'{"key":"string","sub":{"_$TrAnG3_k3Y":true}}'
+		) ;
+
+		testParseEq( parse , '[]' ) ;
+		testParseEq( parse , '[1,2,3]' ) ;
+		testParseEq( parse , '[-12,1.5,"toto",true,false,null,0.3]' ) ;
+		testParseEq( parse , '[-12,1.5,"toto",true,false,null,0.3,[1,2,3],[4,5,6]]' ) ;
+
+		testParseEq( parse , '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false,"sub":{"g":123,"h":[1,2,3],"i":["j","J!"]}}' ) ;
+		testParseEq( parse , '[-12,1.5,"toto",{"g":123,"h":[1,2,3],"i":["j","J!"]},true,false,null,0.3,[1,2,3],[4,5,6]]' ) ;
+
+		testParseEq( parse , ' { "a" :   1 , "b":  \n"string",\n  "c":"" \t,\n\t"d" :   null,"e":true,   "f"   :   false  , "sub":{"g":123,"h":[1,2,3],"i":["j","J!"]}}' ) ;
+
+		testParseEq( parse , fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ) ;
+	} ) ;
+
+	it( "Check that LAXON unquoted keys are off by default" , () => {
+		var parse = json.parser( {} ) ;
+
+		expect( () => parse( '{a:1}' ) ).to.throw() ;
+		expect( () => parse( '{ key : 1 }' ) ).to.throw() ;
+	} ) ;
+
+	it( "LAXON new constants" , () => {
+		var parse = json.parser( { laxonConstants: true } ) ;
+
+		expect( parse( 'Infinity' ) ).to.be( Infinity ) ;
+		expect( parse( 'infinity' ) ).to.be( Infinity ) ;
+		expect( parse( 'NaN' ) ).to.be( NaN ) ;
+		expect( parse( 'nan' ) ).to.be( NaN ) ;
+
+		expect( parse( 'true' ) ).to.be( true ) ;
+		expect( parse( 'false' ) ).to.be( false ) ;
+		expect( parse( 'yes' ) ).to.be( true ) ;
+		expect( parse( 'no' ) ).to.be( false ) ;
+		expect( parse( 'on' ) ).to.be( true ) ;
+		expect( parse( 'off' ) ).to.be( false ) ;
+		expect( parse( 'null' ) ).to.be( null ) ;
+
+		expect( parse( '-Infinity' ) ).to.be( - Infinity ) ;
+		expect( parse( '- Infinity' ) ).to.be( - Infinity ) ;
+	} ) ;
+
+	it( "Check that LAXON constants are off by default" , () => {
+		var parse = json.parser( {} ) ;
+
+		expect( () => parse( 'Infinity' ) ).to.throw() ;
+		expect( () => parse( 'infinity' ) ).to.throw() ;
+		expect( () => parse( 'NaN' ) ).to.throw() ;
+		expect( () => parse( 'nan' ) ).to.throw() ;
+
+		expect( () => parse( 'yes' ) ).to.throw() ;
+		expect( () => parse( 'no' ) ).to.throw() ;
+		expect( () => parse( 'on' ) ).to.throw() ;
+		expect( () => parse( 'off' ) ).to.throw() ;
+
+		expect( () => parse( '-Infinity' ) ).to.throw() ;
+		expect( () => parse( '-infinity' ) ).to.throw() ;
 	} ) ;
 } ) ;
 
