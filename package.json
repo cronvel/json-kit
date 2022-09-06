@@ -1,6 +1,6 @@
 {
   "name": "json-kit",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "JSON stringify(), parse() and more in pure JS.",
   "main": "lib/json.js",
   "directories": {
@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "minimist": "^1.2.6",
-    "smart-preprocessor": "^0.3.4"
+    "smart-preprocessor": "^0.3.5"
   },
   "scripts": {
     "test": "tea-time -R dot"
