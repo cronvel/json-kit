@@ -692,9 +692,9 @@ describe( "JSON stringify + parse with the ref notation" , () => {
 
 
 
-describe( "LAXON stringify + parse with the ref notation" , () => {
-	it( "LAXON unquoted keys test" , () => {
-		var parse = json.parser( { laxonUnquotedKeys: true } ) ;
+describe( "LXON stringify + parse with the ref notation" , () => {
+	it( "LXON unquoted keys test" , () => {
+		var parse = json.parser( { lxonUnquotedKeys: true } ) ;
 
 		testParseEq( parse , 'null' ) ;
 		testParseEq( parse , 'true' ) ;
@@ -740,23 +740,22 @@ describe( "LAXON stringify + parse with the ref notation" , () => {
 		testParseEq( parse , '[-12,1.5,"toto",true,false,null,0.3]' ) ;
 		testParseEq( parse , '[-12,1.5,"toto",true,false,null,0.3,[1,2,3],[4,5,6]]' ) ;
 
-		testParseEq( parse , '{"a":1,"b":"string","c":"","d":null,"e":true,"f":false,"sub":{"g":123,"h":[1,2,3],"i":["j","J!"]}}' ) ;
-		testParseEq( parse , '[-12,1.5,"toto",{"g":123,"h":[1,2,3],"i":["j","J!"]},true,false,null,0.3,[1,2,3],[4,5,6]]' ) ;
-
-		testParseEq( parse , ' { "a" :   1 , "b":  \n"string",\n  "c":"" \t,\n\t"d" :   null,"e":true,   "f"   :   false  , "sub":{"g":123,"h":[1,2,3],"i":["j","J!"]}}' ) ;
-
 		testParseEq( parse , fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ) ;
+		testParseEqAlt( parse ,
+			fs.readFileSync( __dirname + '/../sample/sample1.lxon' ).toString() ,
+			fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString()
+		) ;
 	} ) ;
 
-	it( "Check that LAXON unquoted keys are off by default" , () => {
+	it( "Check that LXON unquoted keys are off by default" , () => {
 		var parse = json.parser( {} ) ;
 
 		expect( () => parse( '{a:1}' ) ).to.throw() ;
 		expect( () => parse( '{ key : 1 }' ) ).to.throw() ;
 	} ) ;
 
-	it( "LAXON new constants" , () => {
-		var parse = json.parser( { laxonConstants: true } ) ;
+	it( "LXON new constants" , () => {
+		var parse = json.parser( { lxonConstants: true } ) ;
 
 		expect( parse( 'Infinity' ) ).to.be( Infinity ) ;
 		expect( parse( 'infinity' ) ).to.be( Infinity ) ;
@@ -775,7 +774,7 @@ describe( "LAXON stringify + parse with the ref notation" , () => {
 		expect( parse( '- Infinity' ) ).to.be( - Infinity ) ;
 	} ) ;
 
-	it( "Check that LAXON constants are off by default" , () => {
+	it( "Check that LXON constants are off by default" , () => {
 		var parse = json.parser( {} ) ;
 
 		expect( () => parse( 'Infinity' ) ).to.throw() ;

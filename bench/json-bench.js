@@ -23,6 +23,8 @@ const parseRaw = json.parser() ;
 const parseDepthLimit = json.parser( { depth: 20 } ) ;
 const parseDepthLimit10 = json.parser( { depth: 10 } ) ;
 const parseRefNotation = json.parser( { refNotation: true } ) ;
+const parseLxon = json.parser( { lxon: true } ) ;
+const parseLxonUnquotedKeys = json.parser( { lxonUnquotedKeys: true } ) ;
 
 
 
@@ -76,7 +78,8 @@ benchmark( 'JSON stringify(), real-world normal object' , function() {
 
 benchmark( 'JSON parse(), real-world normal JSON' , function() {
 	
-	var sample = fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ;
+	var sample = fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString() ,
+		sampleLxon = fs.readFileSync( __dirname + '/../sample/sample1.lxon' ).toString() ;
 	
 	competitor( 'Native JSON.parse()' , function() {
 		JSON.parse( sample ) ;
@@ -97,6 +100,22 @@ benchmark( 'JSON parse(), real-world normal JSON' , function() {
 	
 	competitor( 'refNotation' , function() {
 		parseRefNotation( sample ) ;
+	} ) ;
+
+	competitor( 'LXON (reading .json)' , function() {
+		parseLxon( sample ) ;
+	} ) ;
+
+	competitor( 'LXON (reading .lxon)' , function() {
+		parseLxon( sampleLxon ) ;
+	} ) ;
+
+	competitor( 'lxonUnquotedKeys (reading .json)' , function() {
+		parseLxonUnquotedKeys( sample ) ;
+	} ) ;
+
+	competitor( 'lxonUnquotedKeys (reading .lxon)' , function() {
+		parseLxonUnquotedKeys( sampleLxon ) ;
 	} ) ;
 } ) ;
 
