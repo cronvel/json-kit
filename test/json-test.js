@@ -692,7 +692,17 @@ describe( "JSON stringify + parse with the ref notation" , () => {
 
 
 
-describe( "LXON stringify + parse with the ref notation" , () => {
+describe( "LXON stringify" , () => {
+	it( "LXON unquoted keys test" , () => {
+		var stringify = json.stringifier( { lxonUnquotedKeys: true } ) ;
+		expect( stringify( { a: 1 } ) ).to.be( '{a:1}' ) ;
+		expect( stringify( { "some-key": 1 } ) ).to.be( '{some-key:1}' ) ;
+	} ) ;
+} ) ;
+
+
+
+describe( "LXON parse" , () => {
 	it( "LXON unquoted keys test" , () => {
 		var parse = json.parser( { lxonUnquotedKeys: true } ) ;
 
@@ -745,6 +755,12 @@ describe( "LXON stringify + parse with the ref notation" , () => {
 			fs.readFileSync( __dirname + '/../sample/sample1.lxon' ).toString() ,
 			fs.readFileSync( __dirname + '/../sample/sample1.json' ).toString()
 		) ;
+
+		// Newly added: support for '@' and '-' and numbers can start a key now
+		testParseEqAlt( parse ,
+			'{some-key: "val", dash-:true, -dash:"yay",-:22,@@ref@@:1,1key:1,123:456,012:34}' ,
+			'{"some-key": "val", "dash-":true, "-dash":"yay","-":22,"@@ref@@":1,"1key":1,"123":456,"012":34}'
+		) ;
 	} ) ;
 
 	it( "Check that LXON unquoted keys are off by default" , () => {
@@ -752,6 +768,8 @@ describe( "LXON stringify + parse with the ref notation" , () => {
 
 		expect( () => parse( '{a:1}' ) ).to.throw() ;
 		expect( () => parse( '{ key : 1 }' ) ).to.throw() ;
+		expect( () => parse( '{ 1 : 1 }' ) ).to.throw() ;
+		expect( () => parse( '{ @@ref@@ : 1 }' ) ).to.throw() ;
 	} ) ;
 
 	it( "LXON new constants" , () => {
