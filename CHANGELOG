@@ -1,4 +1,13 @@
 
+v0.7.3
+------
+
+New: LXON stringifier
+LXON is more lax, allowing '@' and '-' in keys, no more extra limitation on the first chararacter of a key
+new format options (space before/after comma/colon)
+CLI is improved, can call uglifyjs (if present on the system) and add an initial comment on top of the file
+
+
 v0.7.2
 ------
 

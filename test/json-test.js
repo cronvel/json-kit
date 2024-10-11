@@ -432,8 +432,13 @@ describe( "JSON stringify" , () => {
 		expect( stringifyStd( o ) ).to.be( '{"akey":"A","anotherkey":1,"yetanotherkey":2,"aKeyCamel":"three","AKEY":"four","sub":{"someKey":"five","omgAKey":6,"sub":{"whatAKey":"seven","stillAKey":"eight"},"array":[{"title":"One two","text":"blah"},{"title":"You should know that!","text":"blah"},{"title":"10 things about nothing","text":"blah blih"}]}}' ) ;
 		expect( stringify( o ) ).to.be( '{"akey":"A","AKEY":"four","aKeyCamel":"three","anotherkey":1,"sub":{"array":[{"text":"blah","title":"One two"},{"text":"blah","title":"You should know that!"},{"text":"blah blih","title":"10 things about nothing"}],"omgAKey":6,"someKey":"five","sub":{"stillAKey":"eight","whatAKey":"seven"}},"yetanotherkey":2}' ) ;
 	} ) ;
+} ) ;
 
+
+
+describe( "JSON stringify format options" , () => {
 	it( "indentation" , () => {
+		// Note that indendation have spaceAfterColon:true by default
 		var stringify = json.stringifier( { indent: '    ' } ) ;
 
 		var o = {
@@ -457,6 +462,68 @@ describe( "JSON stringify" , () => {
 
 		//console.log( "JSON - pretty print:\n" + stringify( o ) ) ;
 		expect( stringify( o ) ).to.be( '{\n    "a": 1,\n    "b": {\n        "c": 3,\n        "d": 4,\n        "e": {\n            "f": 6,\n            "g": 7\n        }\n    },\n    "h": {\n        "i": 9,\n        "j": 10\n    },\n    "k": [\n        "a",\n        "b",\n        "c",\n        true,\n        false,\n        null,\n        [\n            0,\n            1,\n            2,\n            3\n        ],\n        {},\n        []\n    ],\n    "i": {},\n    "j": []\n}' ) ;
+		
+		// Test with tabs
+		stringify = json.stringifier( { indent: '\t' } ) ;
+		expect( stringify( o ) ).to.be( '{\n\t"a": 1,\n\t"b": {\n\t\t"c": 3,\n\t\t"d": 4,\n\t\t"e": {\n\t\t\t"f": 6,\n\t\t\t"g": 7\n\t\t}\n\t},\n\t"h": {\n\t\t"i": 9,\n\t\t"j": 10\n\t},\n\t"k": [\n\t\t"a",\n\t\t"b",\n\t\t"c",\n\t\ttrue,\n\t\tfalse,\n\t\tnull,\n\t\t[\n\t\t\t0,\n\t\t\t1,\n\t\t\t2,\n\t\t\t3\n\t\t],\n\t\t{},\n\t\t[]\n\t],\n\t"i": {},\n\t"j": []\n}' ) ;
+	} ) ;
+
+	it( "space after colon" , () => {
+		var stringify = json.stringifier( { spaceAfterColon: true } ) ;
+
+		var o = {
+			a: 1 ,
+			b: {
+				c: 3 ,
+				d: 4
+			}
+		} ;
+
+		expect( stringify( o ) ).to.be( '{"a": 1,"b": {"c": 3,"d": 4}}' ) ;
+	} ) ;
+
+	it( "space before colon" , () => {
+		var stringify = json.stringifier( { spaceBeforeColon: true } ) ;
+
+		var o = {
+			a: 1 ,
+			b: {
+				c: 3 ,
+				d: 4
+			}
+		} ;
+
+		expect( stringify( o ) ).to.be( '{"a" :1,"b" :{"c" :3,"d" :4}}' ) ;
+	} ) ;
+
+	it( "space after comma" , () => {
+		var stringify = json.stringifier( { spaceAfterComma: true } ) ;
+
+		var o = {
+			a: 1 ,
+			b: {
+				c: 3 ,
+				d: 4 ,
+				e: [ 5 , 6 , 7 ]
+			}
+		} ;
+
+		expect( stringify( o ) ).to.be( '{"a":1, "b":{"c":3, "d":4, "e":[5, 6, 7]}}' ) ;
+	} ) ;
+
+	it( "space before comma" , () => {
+		var stringify = json.stringifier( { spaceBeforeComma: true } ) ;
+
+		var o = {
+			a: 1 ,
+			b: {
+				c: 3 ,
+				d: 4 ,
+				e: [ 5 , 6 , 7 ]
+			}
+		} ;
+
+		expect( stringify( o ) ).to.be( '{"a":1 ,"b":{"c":3 ,"d":4 ,"e":[5 ,6 ,7]}}' ) ;
 	} ) ;
 } ) ;
 
@@ -695,8 +762,62 @@ describe( "JSON stringify + parse with the ref notation" , () => {
 describe( "LXON stringify" , () => {
 	it( "LXON unquoted keys test" , () => {
 		var stringify = json.stringifier( { lxonUnquotedKeys: true } ) ;
-		expect( stringify( { a: 1 } ) ).to.be( '{a:1}' ) ;
-		expect( stringify( { "some-key": 1 } ) ).to.be( '{some-key:1}' ) ;
+
+		expect( stringify( { a: 1 , camelCaseKey: 2 } ) ).to.be( '{a:1,camelCaseKey:2}' ) ;
+		
+		// Test '_'
+		expect( stringify( { "_key": 1 , "key_": 2 , "my_key": 3 } ) ).to.be( '{_key:1,key_:2,my_key:3}' ) ;
+		
+		// Test '-'
+		expect( stringify( { "some-key": 1 , "some-longer-key": 2 , "-some-key": 3 , "some-key-": 4 } ) ).to.be( '{some-key:1,some-longer-key:2,-some-key:3,some-key-:4}' ) ;
+		
+		// Test '@'
+		expect( stringify( { "@key": 1 , "key@": 2 } ) ).to.be( '{@key:1,key@:2}' ) ;
+		
+		// Test '$'
+		expect( stringify( { "$key": 1 , "key$": 2 } ) ).to.be( '{$key:1,key$:2}' ) ;
+		
+		// Test starting/ending and middle numbers
+		expect( stringify( { "1key": 1 , "0key": 2 , "12key": 3 , "key3": 4 , "key4u": 5 } ) ).to.be( '{1key:1,0key:2,12key:3,key3:4,key4u:5}' ) ;
+
+		// Should prefer quoting number + minus only key
+		expect( stringify( { "17": 1 } ) ).to.be( '{"17":1}' ) ;
+		expect( stringify( { "-": 1 , "--": 2 } ) ).to.be( '{"-":1,"--":2}' ) ;
+		expect( stringify( { "-17": 1 , "17-": 2 } ) ).to.be( '{"-17":1,"17-":2}' ) ;
+		
+		// Keys larger than 100 are always quoted
+		var longKey = "longkey".repeat( 15 ) ;
+		expect( stringify( { [longKey]: 1 } ) ).to.be( '{"' + longKey + '":1}' ) ;
+	} ) ;
+
+	it( "Check that LXON unquoted keys are off by default" , () => {
+		var stringify = json.stringifier( {} ) ;
+
+		expect( stringify( { a: 1 } ) ).to.be( '{"a":1}' ) ;
+		expect( stringify( { "some-key": 1 , "some-longer-key": 2 , "-some-key": 3 } ) ).to.be( '{"some-key":1,"some-longer-key":2,"-some-key":3}' ) ;
+	} ) ;
+
+	it( "LXON new constants" , () => {
+		var stringify = json.stringifier( { lxonConstants: true } ) ;
+
+		expect( stringify( Infinity ) ).to.be( 'Infinity' ) ;
+		expect( stringify( -Infinity ) ).to.be( '-Infinity' ) ;
+		expect( stringify( NaN ) ).to.be( 'NaN' ) ;
+
+		expect( stringify( true ) ).to.be( 'true' ) ;
+		expect( stringify( false ) ).to.be( 'false' ) ;
+		expect( stringify( null ) ).to.be( 'null' ) ;
+
+		stringify = json.stringifier( { lxon: true } ) ;
+		expect( stringify( { a: Infinity , b: -Infinity , c: NaN , d: true , e: false , f: null } ) ).to.be( '{a:Infinity,b:-Infinity,c:NaN,d:true,e:false,f:null}' ) ;
+	} ) ;
+
+	it( "Check that LXON constants are off by default" , () => {
+		var stringify = json.stringifier( {} ) ;
+
+		expect( stringify( Infinity ) ).to.be( 'null' ) ;
+		expect( stringify( -Infinity ) ).to.be( 'null' ) ;
+		expect( stringify( NaN ) ).to.be( 'null' ) ;
 	} ) ;
 } ) ;
 

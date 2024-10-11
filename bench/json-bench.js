@@ -18,6 +18,7 @@ const stringifyDocumentDepthLimit = json.stringifier( { documentDepth: 2 } ) ;
 const stringifyCircularRefNotation = json.stringifier( { circularRefNotation: true } ) ;
 const stringifyUniqueRefNotation = json.stringifier( { uniqueRefNotation: true } ) ;
 const stringifyOrderedKeys = json.stringifier( { orderedKeys: true } ) ;
+const stringifyLxon = json.stringifier( { lxon: true } ) ;
 
 const parseRaw = json.parser() ;
 const parseDepthLimit = json.parser( { depth: 20 } ) ;
@@ -71,6 +72,10 @@ benchmark( 'JSON stringify(), real-world normal object' , function() {
 
 	competitor( 'orderedKeys' , function() {
 		stringifyOrderedKeys( sample ) ;
+	} ) ;
+
+	competitor( 'LXON' , function() {
+		stringifyLxon( sample ) ;
 	} ) ;
 } ) ;
 
